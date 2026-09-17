@@ -42,6 +42,7 @@ export const defaultDoc = (): DocState => ({
     heightStep: 0.04,
   },
   geometry: defaultGeometry(),
+  stack: [],
 });
 
 export const defaultSource = (): SourceState => ({ pixels: null, name: '' });

@@ -1,0 +1,43 @@
+.wrapper {
+  display: inline-flex;
+  position: relative;
+}
+
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.swatch {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  /* Checkerboard shows through anything the user picks that is near-white. */
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 8%);
+}
+
+.swatch[data-size='sm'] {
+  width: 12px;
+  height: 12px;
+}
+
+.swatch[data-editable] {
+  cursor: pointer;
+}
+
+.swatch[data-editable]:hover {
+  border-color: var(--accent);
+}
+
+.input:focus-visible + .swatch {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}

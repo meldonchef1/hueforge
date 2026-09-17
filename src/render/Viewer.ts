@@ -12,6 +12,8 @@ import {
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { kelvinToRgb, rgbToHex } from '../core/color';
+import { SimulationMaterial } from './simulationMaterial';
+import type { Rgb } from '../core/color';
 import type { MeshResult } from '../store/meshBus';
 
 export interface ViewerLight {
@@ -29,7 +31,10 @@ export class Viewer {
   private readonly scene = new Scene();
   private readonly camera: PerspectiveCamera;
   private readonly controls: OrbitControls;
-  private readonly material: MeshStandardMaterial;
+  private readonly plainMaterial: MeshStandardMaterial;
+  private readonly simulationMaterial: SimulationMaterial;
+  /** True once a stack has been simulated; before that the model is plain grey. */
+  private simulating = false;
   private readonly key: DirectionalLight;
   private readonly fill: DirectionalLight;
   private readonly ambient: AmbientLight;
@@ -58,7 +63,8 @@ export class Viewer {
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.08;
 
-    this.material = new MeshStandardMaterial({ color: 0xcccccc, roughness: 0.85, metalness: 0 });
+    this.plainMaterial = new MeshStandardMaterial({ color: 0xcccccc, roughness: 0.85, metalness: 0 });
+    this.simulationMaterial = new SimulationMaterial();
 
     this.ambient = new AmbientLight(0xffffff, 0.5);
     this.key = new DirectionalLight(0xffffff, 2);
@@ -84,14 +90,35 @@ export class Viewer {
     geometry.setAttribute('normal', new BufferAttribute(result.normals, 3));
     geometry.computeBoundingSphere();
 
-    this.model = new Mesh(geometry, this.material);
+    this.model = new Mesh(geometry, this.activeMaterial());
     this.scene.add(this.model);
     this.modelRadius = geometry.boundingSphere?.radius ?? 60;
     this.modelHeight = result.maxHeight;
   }
 
+  private activeMaterial() {
+    return this.simulating ? this.simulationMaterial : this.plainMaterial;
+  }
+
+  /**
+   * Hands over the simulated colour per layer. Passing null falls back to plain
+   * grey, which is what an empty stack should look like.
+   */
+  setSimulation(column: Rgb[] | null, layerHeight: number, firstLayerHeight: number): void {
+    const wanted = column !== null && column.length > 0;
+    if (wanted) {
+      this.simulationMaterial.setLut(column);
+      this.simulationMaterial.setLayerHeights(layerHeight, firstLayerHeight);
+    }
+    if (wanted !== this.simulating) {
+      this.simulating = wanted;
+      if (this.model) this.model.material = this.activeMaterial();
+    }
+  }
+
   setWireframe(on: boolean): void {
-    this.material.wireframe = on;
+    this.plainMaterial.wireframe = on;
+    this.simulationMaterial.wireframe = on;
   }
 
   setLight({ kelvin, intensity }: ViewerLight): void {
@@ -137,7 +164,8 @@ export class Viewer {
     cancelAnimationFrame(this.frame);
     this.controls.dispose();
     this.model?.geometry.dispose();
-    this.material.dispose();
+    this.plainMaterial.dispose();
+    this.simulationMaterial.dispose();
     this.renderer.dispose();
   }
 }

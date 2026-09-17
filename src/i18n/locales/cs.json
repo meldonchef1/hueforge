@@ -113,6 +113,50 @@
       "height": "výška"
     }
   },
+  "library": {
+    "custom": "Vlastní",
+    "search": "Hledat filament",
+    "brand": "Značka",
+    "allBrands": "Všechny značky",
+    "sort": "Řazení",
+    "sortName": "Podle názvu",
+    "sortColor": "Podle barvy",
+    "sortTd": "Podle TD",
+    "ownedOnly": "Jen co mám doma",
+    "owned": "Mám doma",
+    "name": "Název filamentu",
+    "color": "Barva filamentu {{name}}",
+    "td": "TD filamentu {{name}}",
+    "tdTip": "Transmission distance v mm — tloušťka, přes kterou už filament neprosvítá. Nízká hodnota znamená krycí barvu.",
+    "addToStack": "Přidat do vrstev",
+    "remove": "Smazat filament",
+    "new": "Nový",
+    "newBrand": "Vlastní",
+    "newName": "Nový filament",
+    "import": "Import",
+    "export": "Export",
+    "empty": "Tady zatím nic není. Zkus jinou záložku nebo zruš filtr."
+  },
+  "layers": {
+    "empty": {
+      "title": "Zatím žádné filamenty",
+      "hint": "Přetáhni filament z knihovny sem, nebo ho přidej tlačítkem + u jeho řádku."
+    },
+    "dropHint": "Sem přetáhni další",
+    "dropZone": "Vrstvy filamentů",
+    "slider": "Výška výměny pro {{name}}",
+    "td": "TD filamentu {{name}}",
+    "tdTip": "Transmission distance v mm. Mění se i v knihovně, je to vlastnost materiálu.",
+    "remove": "Odebrat z vrstev",
+    "missing": "Chybějící filament"
+  },
+  "colorCore": {
+    "empty": "Přidej filamenty",
+    "layer": "Vrstva",
+    "marker": "Výměna na vrstvě {{layer}} na {{name}}",
+    "showTdTip": "Přepne sloupec mezi simulovanou barvou a TD jednotlivých vrstev.",
+    "addSwapTip": "Zapne přidávání výměny kliknutím do sloupce."
+  },
   "geometry": {
     "size": {
       "group": "Rozměry",

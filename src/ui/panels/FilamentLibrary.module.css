@@ -1,0 +1,230 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-panel);
+}
+
+.tabs {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: var(--space-2) var(--space-2) 0;
+}
+
+.tab {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-muted);
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+
+.tab:hover {
+  background: var(--bg-hover);
+  color: var(--fg-primary);
+}
+
+.tab[data-active] {
+  border-color: var(--border-default);
+  background: var(--bg-elevated);
+  color: var(--fg-primary);
+}
+
+.filters {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.search,
+.select {
+  min-width: 0;
+  height: var(--h-control);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--fg-primary);
+  font-size: var(--text-xs);
+}
+
+.search {
+  flex: 1 1 100%;
+}
+
+.select {
+  /* Two selects share one row; the panel is too narrow for three controls. */
+  flex: 1 1 calc(50% - var(--space-2));
+  min-width: 0;
+}
+
+.ownedFilter {
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--fg-muted);
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+
+.list {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: var(--space-1) 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  cursor: grab;
+}
+
+.row:hover {
+  background: var(--bg-hover);
+}
+
+.row:active {
+  cursor: grabbing;
+}
+
+.owned {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.name {
+  display: flex;
+  flex: 1;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fg-primary);
+  font-size: var(--text-xs);
+  text-align: left;
+  cursor: inherit;
+}
+
+.brand {
+  color: var(--fg-muted);
+}
+
+.name,
+.brand {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nameInput {
+  flex: 1;
+  min-width: 0;
+  height: 18px;
+  padding: 0 var(--space-1);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--fg-primary);
+  font-size: var(--text-xs);
+}
+
+.td {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 18px;
+  padding: 0 var(--space-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--fg-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-align: right;
+}
+
+.td:focus {
+  border-color: var(--accent);
+  color: var(--fg-primary);
+  outline: none;
+}
+
+.add,
+.remove {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-muted);
+  font-size: var(--text-sm);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.add:hover {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.remove:hover {
+  background: var(--danger);
+  color: #fff;
+}
+
+.empty {
+  padding: var(--space-5) var(--space-3);
+  color: var(--fg-muted);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.button {
+  flex: 1;
+  height: var(--h-control);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--fg-secondary);
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--bg-hover);
+  color: var(--fg-primary);
+}
+
+.file {
+  display: none;
+}

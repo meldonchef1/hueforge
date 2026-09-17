@@ -5,7 +5,8 @@ import { testImage } from './fixtures/makeImage';
 const image = { name: 'ramp.png', mimeType: 'image/png', buffer: testImage() };
 
 async function loadImage(page: Page) {
-  await page.locator('input[type=file]').setInputFiles(image);
+  // The filament library has a file input too, so pick the one taking images.
+  await page.locator('input[accept="image/*"]').setInputFiles(image);
   // The status bar only fills in once the worker has returned a mesh.
   await expect(page.getByText('Trojúhelníky').locator('xpath=following-sibling::span')).not.toHaveText(
     '—',

@@ -10,6 +10,9 @@ import {
   defaultView,
   PANEL_IDS,
 } from './defaults';
+import { addSlot, moveSlot, removeSlot, setSlotStart } from '../core/stack';
+import { loadLibrary, writeAll } from './filamentDb';
+import type { Filament } from '../core/filament';
 import type {
   ComputedState,
   DocState,
@@ -24,6 +27,12 @@ import type {
 } from './types';
 
 const HISTORY_LIMIT = 100;
+
+/** Blocked or private storage must not take the library down with it. */
+const saveLibrary = (filaments: Filament[]) =>
+  writeAll(filaments).catch(() => {
+    /* the in-memory library still works for this session */
+  });
 
 export interface AppState {
   doc: DocState;
@@ -47,6 +56,19 @@ export interface AppState {
 
   /** Patches the geometry through the history, so Ctrl+Z walks it back. */
   setGeometry: (patch: Partial<ModelGeometry>) => void;
+
+  /** The filament library. Lives in IndexedDB, outside the project's history. */
+  library: Filament[];
+  libraryLoaded: boolean;
+  loadLibrary: () => Promise<void>;
+  upsertFilament: (filament: Filament) => void;
+  removeFilament: (id: string) => void;
+  importFilaments: (filaments: Filament[]) => void;
+
+  addToStack: (filamentId: string, startLayer?: number) => void;
+  removeFromStack: (index: number) => void;
+  moveStackSlot: (from: number, to: number) => void;
+  setStackSlotStart: (index: number, startLayer: number) => void;
   setImage: (pixels: ImageData, name: string) => void;
   clearImage: () => void;
   setComputed: (patch: Partial<ComputedState>) => void;
@@ -120,6 +142,61 @@ export const useAppStore = create<AppState>()(
 
       setGeometry: (patch) =>
         get().commit((doc) => ({ ...doc, geometry: { ...doc.geometry, ...patch } })),
+
+      library: [],
+      libraryLoaded: false,
+
+      loadLibrary: async () => {
+        const library = await loadLibrary();
+        set({ library, libraryLoaded: true });
+      },
+
+      upsertFilament: (filament) => {
+        const library = get().library;
+        const index = library.findIndex((entry) => entry.id === filament.id);
+        const next =
+          index === -1
+            ? [...library, filament]
+            : library.map((entry, i) => (i === index ? filament : entry));
+        set({ library: next });
+        void saveLibrary(next);
+      },
+
+      removeFilament: (id) => {
+        const next = get().library.filter((filament) => filament.id !== id);
+        set({ library: next });
+        void saveLibrary(next);
+        // Slots pointing at it are dropped when the stack is resolved.
+        get().commit((doc) => ({
+          ...doc,
+          stack: doc.stack.filter((slot) => slot.filamentId !== id),
+        }));
+      },
+
+      importFilaments: (filaments) => {
+        const byId = new Map(get().library.map((filament) => [filament.id, filament]));
+        for (const filament of filaments) byId.set(filament.id, filament);
+        const next = [...byId.values()];
+        set({ library: next });
+        void saveLibrary(next);
+      },
+
+      addToStack: (filamentId, startLayer) =>
+        get().commit((doc) => ({ ...doc, stack: addSlot(doc.stack, filamentId, startLayer) })),
+
+      removeFromStack: (index) =>
+        get().commit((doc) => ({ ...doc, stack: removeSlot(doc.stack, index) })),
+
+      moveStackSlot: (from, to) =>
+        get().commit((doc) => ({ ...doc, stack: moveSlot(doc.stack, from, to) })),
+
+      setStackSlotStart: (index, startLayer) => {
+        const maxLayer = Math.max(0, get().computed.layers - 1);
+        get().commit((doc) => ({
+          ...doc,
+          stack: setSlotStart(doc.stack, index, startLayer, maxLayer),
+        }));
+      },
 
       setImage: (pixels, name) => {
         set({ source: { pixels, name } });

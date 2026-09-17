@@ -3,6 +3,7 @@ import { MenuBar } from './panels/MenuBar';
 import { TopBar } from './panels/TopBar';
 import { StatusBar } from './panels/StatusBar';
 import { DockLayout } from './layout/DockLayout';
+import { useFilamentLibrary } from './hooks/useFilamentLibrary';
 import { useThemeSync } from './hooks/useThemeSync';
 import { useLanguageSync } from './hooks/useLanguageSync';
 import { useAutosave } from './hooks/useAutosave';
@@ -13,6 +14,7 @@ import styles from './App.module.css';
 
 export function App() {
   const { t } = useTranslation();
+  useFilamentLibrary();
   useThemeSync();
   useLanguageSync();
   useAutosave();
