@@ -1,0 +1,117 @@
+{
+  "app": {
+    "name": "HueForge",
+    "version": "version {{version}}",
+    "tooSmall": {
+      "title": "Use a computer",
+      "body": "HueForge needs at least 1366 × 768 pixels. Colours and layers are not workable on a phone or tablet."
+    }
+  },
+  "menu": {
+    "file": {
+      "label": "File",
+      "new": "New project",
+      "open": "Open…",
+      "save": "Save",
+      "saveAs": "Save as…",
+      "exportStl": "Export STL",
+      "export3mf": "Export 3MF",
+      "exportSwaps": "Export swap instructions",
+      "exportPng": "Export preview PNG"
+    },
+    "edit": {
+      "label": "Edit",
+      "undo": "Undo",
+      "redo": "Redo",
+      "pasteImage": "Paste image from clipboard"
+    },
+    "view": {
+      "label": "View",
+      "resetLayout": "Reset layout"
+    },
+    "preferences": {
+      "label": "Preferences",
+      "units": "Units",
+      "theme": "Theme",
+      "language": "Language",
+      "defaultPrinter": "Default printer"
+    },
+    "help": {
+      "label": "Help",
+      "firstPrintGuide": "First print guide",
+      "shortcuts": "Keyboard shortcuts"
+    }
+  },
+  "units": {
+    "mm": "Millimetres",
+    "in": "Inches"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light"
+  },
+  "language": {
+    "cs": "Czech",
+    "en": "English"
+  },
+  "topBar": {
+    "light": {
+      "group": "Light",
+      "kind": "Light type",
+      "warm": "Warm 2700 K",
+      "neutral": "Neutral 4000 K",
+      "daylight": "Daylight 6500 K",
+      "intensity": "Intensity",
+      "intensityTip": "How brightly the light shines in the preview simulation. Does not affect the print."
+    },
+    "view": {
+      "group": "View",
+      "resetCamera": "Reset view",
+      "wireframe": "Wireframe",
+      "regenerateMesh": "Regenerate mesh",
+      "describe": "Describe settings"
+    },
+    "mode": {
+      "group": "Mode",
+      "filament": "Filament painting",
+      "lithophane": "Lithophane",
+      "tip": "A lithophane is backlit, filament painting is viewed from the front."
+    },
+    "heights": {
+      "group": "Layer heights",
+      "layerHeight": "Layer height",
+      "layerHeightTip": "Height of one printed layer in mm. Sets how finely colour can be tuned.",
+      "firstLayerHeight": "First layer",
+      "firstLayerHeightTip": "Height of the first layer in mm. Usually thicker for bed adhesion.",
+      "heightStep": "Height step",
+      "heightStepTip": "How many mm a height changes per arrow key or mouse wheel notch.",
+      "notMultiple": "Value must be a multiple of the layer height ({{layerHeight}} mm)."
+    }
+  },
+  "panels": {
+    "filamentLibrary": "Filament library",
+    "preview": "Live 3D preview",
+    "colorCore": "Colour core",
+    "heightSlice": "Height slice",
+    "sourceImage": "Source image",
+    "layerSliders": "Filament layers",
+    "modelGeometry": "Model geometry",
+    "placeholder": "Coming in milestone {{milestone}}."
+  },
+  "statusBar": {
+    "meshHeight": "Mesh height",
+    "triangles": "Triangles",
+    "fps": "FPS",
+    "save": {
+      "saved": "Saved",
+      "dirty": "Unsaved changes",
+      "saving": "Saving…"
+    },
+    "trianglesOverLimit": "Triangle count exceeds the limit of {{limit}}."
+  },
+  "common": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "notImplemented": "This feature is coming in a later milestone."
+  }
+}

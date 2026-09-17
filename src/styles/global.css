@@ -1,0 +1,83 @@
+@import '../../design/tokens.css';
+@import 'dockview/dist/styles/dockview.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg-app);
+  color: var(--fg-primary);
+  font-family: var(--font-ui);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border: 2px solid transparent;
+  background-clip: content-box;
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+  background-clip: content-box;
+}
+
+/* Map dockview's theme variables onto our tokens so both themes stay in sync. */
+.dockview-theme-hueforge {
+  --dv-background-color: var(--bg-app);
+  --dv-paneview-active-outline-color: var(--accent);
+  --dv-tabs-and-actions-container-background-color: var(--bg-panel-header);
+  --dv-tabs-and-actions-container-font-size: var(--text-sm);
+  --dv-tabs-and-actions-container-height: var(--h-tab);
+  --dv-activegroup-visiblepanel-tab-background-color: var(--bg-panel);
+  --dv-activegroup-hiddenpanel-tab-background-color: var(--bg-panel-header);
+  --dv-inactivegroup-visiblepanel-tab-background-color: var(--bg-panel);
+  --dv-inactivegroup-hiddenpanel-tab-background-color: var(--bg-panel-header);
+  --dv-activegroup-visiblepanel-tab-color: var(--fg-primary);
+  --dv-activegroup-hiddenpanel-tab-color: var(--fg-muted);
+  --dv-inactivegroup-visiblepanel-tab-color: var(--fg-secondary);
+  --dv-inactivegroup-hiddenpanel-tab-color: var(--fg-muted);
+  --dv-separator-border: var(--border-strong);
+  --dv-paneview-header-border-color: var(--border-subtle);
+  --dv-group-view-background-color: var(--bg-panel);
+  --dv-tab-divider-color: var(--border-subtle);
+  --dv-active-sash-color: var(--accent);
+  --dv-drag-over-background-color: var(--accent-subtle);
+  --dv-drag-over-border-color: var(--accent);
+  --dv-icon-hover-background-color: var(--bg-hover);
+  --dv-floating-box-shadow: var(--shadow-menu);
+}

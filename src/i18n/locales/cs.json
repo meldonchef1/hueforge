@@ -1,0 +1,117 @@
+{
+  "app": {
+    "name": "HueForge",
+    "version": "verze {{version}}",
+    "tooSmall": {
+      "title": "Použij počítač",
+      "body": "HueForge potřebuje aspoň 1366 × 768 bodů. Na telefonu a tabletu se s barvami a vrstvami nedá rozumně pracovat."
+    }
+  },
+  "menu": {
+    "file": {
+      "label": "Soubor",
+      "new": "Nový projekt",
+      "open": "Otevřít…",
+      "save": "Uložit",
+      "saveAs": "Uložit jako…",
+      "exportStl": "Exportovat STL",
+      "export3mf": "Exportovat 3MF",
+      "exportSwaps": "Exportovat instrukce výměn",
+      "exportPng": "Exportovat náhled PNG"
+    },
+    "edit": {
+      "label": "Úpravy",
+      "undo": "Zpět",
+      "redo": "Znovu",
+      "pasteImage": "Vložit obrázek ze schránky"
+    },
+    "view": {
+      "label": "Zobrazení",
+      "resetLayout": "Obnovit výchozí rozvržení"
+    },
+    "preferences": {
+      "label": "Předvolby",
+      "units": "Jednotky",
+      "theme": "Téma",
+      "language": "Jazyk",
+      "defaultPrinter": "Výchozí tiskárna"
+    },
+    "help": {
+      "label": "Nápověda",
+      "firstPrintGuide": "Průvodce prvním tiskem",
+      "shortcuts": "Klávesové zkratky"
+    }
+  },
+  "units": {
+    "mm": "Milimetry",
+    "in": "Palce"
+  },
+  "theme": {
+    "dark": "Tmavé",
+    "light": "Světlé"
+  },
+  "language": {
+    "cs": "Čeština",
+    "en": "Angličtina"
+  },
+  "topBar": {
+    "light": {
+      "group": "Světlo",
+      "kind": "Typ světla",
+      "warm": "Teplá 2700 K",
+      "neutral": "Neutrální 4000 K",
+      "daylight": "Denní 6500 K",
+      "intensity": "Intenzita",
+      "intensityTip": "Jak silně svítí světlo v simulaci náhledu. Neovlivňuje výsledný tisk."
+    },
+    "view": {
+      "group": "Pohled",
+      "resetCamera": "Reset pohledu",
+      "wireframe": "Drátový model",
+      "regenerateMesh": "Přegenerovat mesh",
+      "describe": "Popis nastavení"
+    },
+    "mode": {
+      "group": "Režim",
+      "filament": "Malování filamentem",
+      "lithophane": "Litofanie",
+      "tip": "Litofanie se prosvěcuje zezadu, malování filamentem se dívá zepředu."
+    },
+    "heights": {
+      "group": "Výšky vrstev",
+      "layerHeight": "Výška vrstvy",
+      "layerHeightTip": "Výška jedné tištěné vrstvy v mm. Určuje, jak jemně jde ladit barvu.",
+      "firstLayerHeight": "První vrstva",
+      "firstLayerHeightTip": "Výška první vrstvy v mm. Bývá vyšší kvůli přilnutí k podložce.",
+      "heightStep": "Krok výšky",
+      "heightStepTip": "O kolik mm se mění výška při kroku šipkou nebo kolečkem myši.",
+      "notMultiple": "Hodnota musí být násobek výšky vrstvy ({{layerHeight}} mm)."
+    }
+  },
+  "panels": {
+    "filamentLibrary": "Knihovna filamentů",
+    "preview": "Živý 3D náhled",
+    "colorCore": "Barevný sloupec",
+    "heightSlice": "Řez výškou",
+    "sourceImage": "Zdrojový obrázek",
+    "layerSliders": "Vrstvy filamentů",
+    "modelGeometry": "Geometrie modelu",
+    "placeholder": "Připraveno v milníku {{milestone}}."
+  },
+  "statusBar": {
+    "meshHeight": "Výška meshe",
+    "triangles": "Trojúhelníky",
+    "fps": "FPS",
+    "save": {
+      "saved": "Uloženo",
+      "dirty": "Neuložené změny",
+      "saving": "Ukládám…"
+    },
+    "trianglesOverLimit": "Počet trojúhelníků přesahuje limit {{limit}}."
+  },
+  "common": {
+    "close": "Zavřít",
+    "cancel": "Zrušit",
+    "notImplemented": "Tahle funkce přijde v dalším milníku."
+  }
+}
