@@ -77,6 +77,12 @@ export function ModelGeometry() {
           checked={geometry.lockAspect}
           onChange={(lockAspect) => setGeometry({ lockAspect })}
         />
+        <Checkbox
+          label={t('geometry.size.cropToAlpha')}
+          tooltip={t('geometry.size.cropToAlphaTip')}
+          checked={geometry.cropToAlpha}
+          onChange={(cropToAlpha) => setGeometry({ cropToAlpha })}
+        />
         <NumberInput
           label={t('geometry.size.detail')}
           tooltip={t('geometry.size.detailTip')}

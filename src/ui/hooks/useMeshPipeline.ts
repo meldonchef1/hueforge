@@ -94,6 +94,7 @@ export function useMeshPipeline() {
         firstLayerHeight: heights.firstLayerHeight,
         border: geometry.border,
         brightness: geometry.brightness,
+        cropToAlpha: geometry.cropToAlpha,
       };
       instance.postMessage(message);
     }, REBUILD_DELAY);

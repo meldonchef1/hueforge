@@ -82,6 +82,26 @@ export function luminanceField(
   return { width, height, data };
 }
 
+/**
+ * Opacity per pixel, 0..1. Kept apart from luminance because transparency says
+ * where there is material at all, not how tall it is.
+ */
+export function alphaField(pixels: Uint8ClampedArray, width: number, height: number): GrayField {
+  const data = new Float32Array(width * height);
+  for (let i = 0, p = 3; i < data.length; i++, p += 4) {
+    data[i] = pixels[p] / 255;
+  }
+  return { width, height, data };
+}
+
+/** True when nothing in the image is even partly transparent. */
+export function isOpaque(field: GrayField): boolean {
+  for (const value of field.data) {
+    if (value < 1) return false;
+  }
+  return true;
+}
+
 /** Separable box blur, run in place. Radius is in pixels. */
 export function blur(field: GrayField, radius: number): void {
   if (radius < 1) return;

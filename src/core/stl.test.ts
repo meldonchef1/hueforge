@@ -15,6 +15,8 @@ function heightMap(cols: number, rows: number, heights: number[]): HeightMap {
     minHeight: Math.min(...heights),
     maxHeight: Math.max(...heights),
     layers: 1,
+    solid: new Uint8Array(heights.length).fill(1),
+    fullySolid: true,
   };
 }
 

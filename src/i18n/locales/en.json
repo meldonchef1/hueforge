@@ -166,6 +166,8 @@
       "heightTip": "Height of the finished print in mm, measured flat on the bed.",
       "lockAspect": "Lock aspect",
       "lockAspectTip": "Keeps the loaded image's proportions so it cannot stretch.",
+      "cropToAlpha": "Follow transparency",
+      "cropToAlphaTip": "The model takes the image's shape and leaves transparent areas empty. No effect on an image without transparency.",
       "detail": "Detail size",
       "detailTip": "Distance between mesh samples in mm. Smaller means finer detail and more triangles."
     },

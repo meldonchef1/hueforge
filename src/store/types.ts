@@ -56,6 +56,11 @@ export interface ModelGeometry {
   maxDepth: number;
   /** Snap max depth to a whole number of layers. */
   dynamicDepth: boolean;
+  /**
+   * Follow the image's transparent edges instead of filling a rectangle.
+   * Has no effect on an image without an alpha channel.
+   */
+  cropToAlpha: boolean;
   brightness: BrightnessSettings;
 }
 

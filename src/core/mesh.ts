@@ -1,9 +1,13 @@
 import type { HeightMap } from './heightmap';
 
 /**
- * Builds a watertight solid from a height map: the relief on top, four walls
- * down to the bed, and a flat floor. Triangles are stored unindexed because
- * that is what both STL and a non-indexed BufferGeometry want.
+ * Builds a watertight solid from a height map: the relief on top, walls down to
+ * the bed, and a floor. Triangles are stored unindexed because that is what
+ * both STL and a non-indexed BufferGeometry want.
+ *
+ * Where the source image was transparent the model has no material at all, so
+ * the outline follows the picture instead of boxing it into a rectangle. Walls
+ * then go up wherever a filled cell meets an empty one, inside holes included.
  *
  * Axes are the printer's: X right, Y back, Z up, with the model centred on XY
  * and sitting on Z = 0.
@@ -16,11 +20,12 @@ export interface Mesh {
   size: { x: number; y: number; z: number };
 }
 
+/** Triangles for a rectangle with no holes, where the floor can be one fan. */
 export function triangleCountFor(cols: number, rows: number): number {
   const top = 2 * (cols - 1) * (rows - 1);
   const walls = 4 * (cols - 1) + 4 * (rows - 1);
-  // The floor fans out from its centre so its edges match the wall segments
-  // one for one. Two big triangles would leave T-junctions along every wall.
+  // The floor fans out from its centre so its edges match the wall segments one
+  // for one. Two big triangles would leave T-junctions along every wall.
   const floor = 2 * (cols - 1) + 2 * (rows - 1);
   return top + walls + floor;
 }
@@ -65,18 +70,19 @@ class MeshBuilder {
   }
 
   finish(size: Mesh['size']): Mesh {
+    const used = this.offset;
     return {
-      positions: this.positions,
-      normals: this.normals,
-      triangleCount: this.offset / 9,
+      // Trim: the budget is an upper bound when the outline has holes.
+      positions: used === this.positions.length ? this.positions : this.positions.subarray(0, used),
+      normals: used === this.normals.length ? this.normals : this.normals.subarray(0, used),
+      triangleCount: used / 9,
       size,
     };
   }
 }
 
 export function buildMesh(map: HeightMap): Mesh {
-  const { cols, rows, data, cellX, cellY, widthMm, heightMm } = map;
-  const builder = new MeshBuilder(triangleCountFor(cols, rows));
+  const { cols, rows, data, cellX, cellY, widthMm, heightMm, solid, fullySolid } = map;
 
   const halfW = widthMm / 2;
   const halfH = heightMm / 2;
@@ -85,20 +91,99 @@ export function buildMesh(map: HeightMap): Mesh {
   const yAt = (row: number) => halfH - row * cellY;
   const hAt = (col: number, row: number) => data[row * cols + col];
 
-  // Relief.
+  /** A cell carries material only when all four of its corners do. */
+  const filled = (col: number, row: number): boolean => {
+    if (col < 0 || row < 0 || col >= cols - 1 || row >= rows - 1) return false;
+    const top = row * cols + col;
+    const bottom = top + cols;
+    return (
+      solid[top] === 1 && solid[top + 1] === 1 && solid[bottom] === 1 && solid[bottom + 1] === 1
+    );
+  };
+
+  if (fullySolid) return buildFullMesh(map, xAt, yAt, hAt);
+
+  // Count first: with holes the triangle total is not a formula.
+  let cells = 0;
+  let wallEdges = 0;
+  for (let row = 0; row < rows - 1; row++) {
+    for (let col = 0; col < cols - 1; col++) {
+      if (!filled(col, row)) continue;
+      cells++;
+      if (!filled(col - 1, row)) wallEdges++;
+      if (!filled(col + 1, row)) wallEdges++;
+      if (!filled(col, row - 1)) wallEdges++;
+      if (!filled(col, row + 1)) wallEdges++;
+    }
+  }
+
+  // Top and floor are 2 triangles per cell; each exposed edge is a 2-triangle wall.
+  const builder = new MeshBuilder(4 * cells + 2 * wallEdges);
+  let maxHeight = 0;
+
+  for (let row = 0; row < rows - 1; row++) {
+    for (let col = 0; col < cols - 1; col++) {
+      if (!filled(col, row)) continue;
+
+      const x0 = xAt(col);
+      const x1 = xAt(col + 1);
+      const yTop = yAt(row);
+      const yBot = yAt(row + 1);
+      const h00 = hAt(col, row);
+      const h10 = hAt(col + 1, row);
+      const h01 = hAt(col, row + 1);
+      const h11 = hAt(col + 1, row + 1);
+      maxHeight = Math.max(maxHeight, h00, h10, h01, h11);
+
+      // Relief.
+      builder.add(x0, yTop, h00, x0, yBot, h01, x1, yBot, h11);
+      builder.add(x0, yTop, h00, x1, yBot, h11, x1, yTop, h10);
+
+      // Floor, facing down.
+      builder.add(x0, yTop, 0, x1, yBot, 0, x0, yBot, 0);
+      builder.add(x0, yTop, 0, x1, yTop, 0, x1, yBot, 0);
+
+      if (!filled(col - 1, row)) {
+        builder.add(x0, yTop, 0, x0, yBot, 0, x0, yBot, h01);
+        builder.add(x0, yTop, 0, x0, yBot, h01, x0, yTop, h00);
+      }
+      if (!filled(col + 1, row)) {
+        builder.add(x1, yTop, 0, x1, yBot, h11, x1, yBot, 0);
+        builder.add(x1, yTop, 0, x1, yTop, h10, x1, yBot, h11);
+      }
+      if (!filled(col, row - 1)) {
+        builder.add(x0, yTop, 0, x1, yTop, h10, x1, yTop, 0);
+        builder.add(x0, yTop, 0, x0, yTop, h00, x1, yTop, h10);
+      }
+      if (!filled(col, row + 1)) {
+        builder.add(x0, yBot, 0, x1, yBot, 0, x1, yBot, h11);
+        builder.add(x0, yBot, 0, x1, yBot, h11, x0, yBot, h01);
+      }
+    }
+  }
+
+  return builder.finish({ x: widthMm, y: heightMm, z: maxHeight });
+}
+
+/** The rectangular case, where the floor collapses to a single fan. */
+function buildFullMesh(
+  map: HeightMap,
+  xAt: (col: number) => number,
+  yAt: (row: number) => number,
+  hAt: (col: number, row: number) => number,
+): Mesh {
+  const { cols, rows, widthMm, heightMm } = map;
+  const builder = new MeshBuilder(triangleCountFor(cols, rows));
+
   for (let row = 0; row < rows - 1; row++) {
     for (let col = 0; col < cols - 1; col++) {
       const x0 = xAt(col);
       const x1 = xAt(col + 1);
       const y0 = yAt(row);
       const y1 = yAt(row + 1);
-      const h00 = hAt(col, row);
-      const h10 = hAt(col + 1, row);
-      const h01 = hAt(col, row + 1);
-      const h11 = hAt(col + 1, row + 1);
 
-      builder.add(x0, y0, h00, x0, y1, h01, x1, y1, h11);
-      builder.add(x0, y0, h00, x1, y1, h11, x1, y0, h10);
+      builder.add(x0, y0, hAt(col, row), x0, y1, hAt(col, row + 1), x1, y1, hAt(col + 1, row + 1));
+      builder.add(x0, y0, hAt(col, row), x1, y1, hAt(col + 1, row + 1), x1, y0, hAt(col + 1, row));
     }
   }
 
@@ -107,7 +192,6 @@ export function buildMesh(map: HeightMap): Mesh {
   const back = yAt(0);
   const front = yAt(rows - 1);
 
-  // Back wall (+Y) and front wall (-Y).
   for (let col = 0; col < cols - 1; col++) {
     const x0 = xAt(col);
     const x1 = xAt(col + 1);
@@ -123,7 +207,6 @@ export function buildMesh(map: HeightMap): Mesh {
     builder.add(x0, front, 0, x1, front, hf1, x0, front, hf0);
   }
 
-  // Left wall (-X) and right wall (+X).
   for (let row = 0; row < rows - 1; row++) {
     const y0 = yAt(row);
     const y1 = yAt(row + 1);
@@ -139,7 +222,6 @@ export function buildMesh(map: HeightMap): Mesh {
     builder.add(right, y0, 0, right, y0, hr0, right, y1, hr1);
   }
 
-  // Floor: a fan from the centre over the same segments the walls stand on.
   const perimeter: [number, number][] = [];
   for (let col = 0; col < cols - 1; col++) perimeter.push([xAt(col), front]);
   for (let row = rows - 1; row > 0; row--) perimeter.push([right, yAt(row)]);
