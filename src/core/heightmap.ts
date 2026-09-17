@@ -26,6 +26,8 @@ export interface HeightMapSettings {
   layerHeight: number;
   firstLayerHeight: number;
   border: BorderSettings;
+  /** Opacity at or above which a sample counts as material. */
+  alphaThreshold?: number;
 }
 
 export interface HeightMap {
@@ -42,6 +44,10 @@ export interface HeightMap {
   maxHeight: number;
   /** Layers needed for the tallest sample. */
   layers: number;
+  /** 1 where the model has material, 0 where the image was transparent. */
+  solid: Uint8Array;
+  /** True when nothing was masked out, which lets the mesh take a faster path. */
+  fullySolid: boolean;
 }
 
 /** Snaps a height to a whole number of layers, never below the first layer. */
@@ -80,7 +86,12 @@ export function gridSize(widthMm: number, heightMm: number, detailMm: number) {
   };
 }
 
-export function buildHeightMap(field: GrayField, settings: HeightMapSettings): HeightMap {
+export function buildHeightMap(
+  field: GrayField,
+  settings: HeightMapSettings,
+  /** Opacity per pixel. Omit it and the model fills its whole rectangle. */
+  alpha?: GrayField,
+): HeightMap {
   const { widthMm, heightMm, layerHeight, firstLayerHeight, border } = settings;
   const { cols, rows } = gridSize(widthMm, heightMm, settings.detailMm);
 
@@ -100,6 +111,9 @@ export function buildHeightMap(field: GrayField, settings: HeightMapSettings): H
   const borderV = borderOn ? Math.min(0.5, border.width / heightMm) : 0;
 
   const data = new Float32Array(cols * rows);
+  const solid = new Uint8Array(cols * rows);
+  const threshold = settings.alphaThreshold ?? 0.5;
+  let fullySolid = true;
   let minHeight = Infinity;
   let maxHeight = -Infinity;
 
@@ -107,28 +121,48 @@ export function buildHeightMap(field: GrayField, settings: HeightMapSettings): H
     const v = rows > 1 ? row / (rows - 1) : 0;
     for (let col = 0; col < cols; col++) {
       const u = cols > 1 ? col / (cols - 1) : 0;
+      const index = row * cols + col;
 
       let value: number;
       if (borderOn && (u < borderU || u > 1 - borderU || v < borderV || v > 1 - borderV)) {
+        // The frame is a solid rim; transparency in the image does not cut it.
         value = borderHeight;
+        solid[index] = 1;
       } else {
         // Remap the inner area back to the full image so the frame crops nothing.
         const iu = borderU > 0 ? (u - borderU) / (1 - 2 * borderU) : u;
         const iv = borderV > 0 ? (v - borderV) / (1 - 2 * borderV) : v;
         const brightness = sampleField(field, iu, iv);
         value = quantise(base + brightness * relief, layerHeight, firstLayerHeight);
+
+        const opacity = alpha ? sampleField(alpha, iu, iv) : 1;
+        if (opacity >= threshold) {
+          solid[index] = 1;
+        } else {
+          fullySolid = false;
+        }
       }
 
-      data[row * cols + col] = value;
-      if (value < minHeight) minHeight = value;
-      if (value > maxHeight) maxHeight = value;
+      data[index] = value;
+      if (solid[index]) {
+        if (value < minHeight) minHeight = value;
+        if (value > maxHeight) maxHeight = value;
+      }
     }
   }
 
+  // An image that is transparent everywhere leaves nothing to measure.
+  if (!Number.isFinite(minHeight)) {
+    minHeight = 0;
+    maxHeight = 0;
+  }
+
   const layers =
-    maxHeight <= firstLayerHeight
-      ? 1
-      : 1 + Math.round((maxHeight - firstLayerHeight) / layerHeight);
+    maxHeight <= 0
+      ? 0
+      : maxHeight <= firstLayerHeight
+        ? 1
+        : 1 + Math.round((maxHeight - firstLayerHeight) / layerHeight);
 
   return {
     cols,
@@ -141,5 +175,7 @@ export function buildHeightMap(field: GrayField, settings: HeightMapSettings): H
     minHeight,
     maxHeight,
     layers,
+    solid,
+    fullySolid,
   };
 }

@@ -65,3 +65,49 @@ export function testImage(width = 120, height = 90): Buffer {
     return [value, value, value];
   });
 }
+
+/** RGBA PNG encoder, for fixtures that need an alpha channel. */
+export function encodePngRgba(
+  width: number,
+  height: number,
+  pixel: (x: number, y: number) => [number, number, number, number],
+): Buffer {
+  const raw = Buffer.alloc(height * (width * 4 + 1));
+  let offset = 0;
+  for (let y = 0; y < height; y++) {
+    raw[offset++] = 0; // filter: none
+    for (let x = 0; x < width; x++) {
+      const [r, g, b, a] = pixel(x, y);
+      raw[offset++] = r;
+      raw[offset++] = g;
+      raw[offset++] = b;
+      raw[offset++] = a;
+    }
+  }
+
+  const header = Buffer.alloc(13);
+  header.writeUInt32BE(width, 0);
+  header.writeUInt32BE(height, 4);
+  header[8] = 8; // bit depth
+  header[9] = 6; // colour type: truecolour with alpha
+
+  return Buffer.concat([
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+    chunk('IHDR', header),
+    chunk('IDAT', deflateSync(raw)),
+    chunk('IEND', Buffer.alloc(0)),
+  ]);
+}
+
+/** A bright disc on a fully transparent background — half the frame is empty. */
+export function transparentTestImage(width = 120, height = 120): Buffer {
+  const radius = Math.min(width, height) * 0.4;
+  return encodePngRgba(width, height, (x, y) => {
+    const dx = x - width / 2;
+    const dy = y - height / 2;
+    const distance = Math.hypot(dx, dy);
+    if (distance > radius) return [0, 0, 0, 0];
+    const value = Math.round(255 * (1 - distance / radius));
+    return [value, value, value, 255];
+  });
+}

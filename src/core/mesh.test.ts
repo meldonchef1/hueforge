@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { buildMesh, signedVolume, triangleCountFor, type Mesh } from './mesh';
 import type { HeightMap } from './heightmap';
 
-function heightMap(cols: number, rows: number, heights: number[]): HeightMap {
+function heightMap(cols: number, rows: number, heights: number[], mask?: number[]): HeightMap {
   const data = Float32Array.from(heights);
+  const solid = mask ? Uint8Array.from(mask) : new Uint8Array(heights.length).fill(1);
   return {
     cols,
     rows,
@@ -15,6 +16,8 @@ function heightMap(cols: number, rows: number, heights: number[]): HeightMap {
     minHeight: Math.min(...heights),
     maxHeight: Math.max(...heights),
     layers: 1,
+    solid,
+    fullySolid: !mask || solid.every((value) => value === 1),
   };
 }
 
@@ -114,6 +117,50 @@ describe('buildMesh', () => {
     for (let i = 0; i < mesh.triangleCount * 9; i += 3) {
       expect(Math.hypot(n[i], n[i + 1], n[i + 2])).toBeCloseTo(1, 5);
     }
+  });
+
+  it('leaves out cells the mask does not cover', () => {
+    const full = buildMesh(heightMap(3, 3, Array(9).fill(1)));
+    // Knocking out one corner sample removes the one cell that used it.
+    const clipped = buildMesh(heightMap(3, 3, Array(9).fill(1), [0, 1, 1, 1, 1, 1, 1, 1, 1]));
+    expect(clipped.triangleCount).toBeLessThan(full.triangleCount);
+    expect(signedVolume(clipped)).toBeLessThan(signedVolume(full));
+  });
+
+  it('is watertight with a corner clipped off', () => {
+    const mesh = buildMesh(heightMap(3, 3, Array(9).fill(2), [0, 1, 1, 1, 1, 1, 1, 1, 1]));
+    expect(isWatertight(mesh)).toBe(true);
+    expect(signedVolume(mesh)).toBeGreaterThan(0);
+  });
+
+  it('is watertight with a hole punched through the middle', () => {
+    // 4x4 samples, centre sample cleared: the four cells touching it disappear.
+    const mask = Array(16).fill(1);
+    mask[5] = 0;
+    const mesh = buildMesh(heightMap(4, 4, Array(16).fill(1.5), mask));
+    expect(isWatertight(mesh)).toBe(true);
+    expect(signedVolume(mesh)).toBeGreaterThan(0);
+  });
+
+  it('is watertight when the mask leaves two separate islands', () => {
+    // A bridge of empty samples splits the plate in half.
+    const mask = [1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1];
+    const mesh = buildMesh(heightMap(5, 3, Array(15).fill(1), mask));
+    expect(isWatertight(mesh)).toBe(true);
+    expect(signedVolume(mesh)).toBeGreaterThan(0);
+  });
+
+  it('gives a masked model the volume of its filled cells', () => {
+    const mask = Array(9).fill(1);
+    mask[0] = 0;
+    const mesh = buildMesh(heightMap(3, 3, Array(9).fill(2), mask));
+    // Three of four cells survive, each 5x5 mm and 2 mm tall.
+    expect(signedVolume(mesh)).toBeCloseTo(3 * 5 * 5 * 2, 3);
+  });
+
+  it('builds nothing when the mask is empty', () => {
+    const mesh = buildMesh(heightMap(3, 3, Array(9).fill(1), Array(9).fill(0)));
+    expect(mesh.triangleCount).toBe(0);
   });
 
   it('puts the top of the image at the back of the model', () => {

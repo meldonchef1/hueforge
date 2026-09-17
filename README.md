@@ -56,6 +56,10 @@ a později přesunout do Web Workeru nebo do Rustu.
 Panely, které patří k pozdějším milníkům, jsou v rozvržení už teď a říkají,
 ve kterém milníku se naplní.
 
+Obrázek s průhledným pozadím (logo, vyříznutý motiv) dá model ve svém tvaru,
+ne desku — model kopíruje neprůhlednou část a stěny jdou po obvodu tvaru
+i kolem děr uvnitř. Vypnout to jde v Geometrii přepínačem „Podle průhlednosti".
+
 > **TD hodnoty ve výchozí knihovně jsou odhad, ne měření.** Než se na simulované
 > barvy začneš spoléhat, změř si TD vlastního filamentu — na to je milník 4.
 > Podrobnosti v [`public/filaments/README.md`](./public/filaments/README.md).

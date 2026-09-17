@@ -166,6 +166,8 @@
       "heightTip": "Výška hotového výtisku v mm, měřeno v rovině podložky.",
       "lockAspect": "Zámek poměru",
       "lockAspectTip": "Drží poměr stran podle nahraného obrázku, aby se nedeformoval.",
+      "cropToAlpha": "Podle průhlednosti",
+      "cropToAlphaTip": "Model kopíruje tvar obrázku a průhledná místa nechá prázdná. U obrázku bez průhlednosti nemá efekt.",
       "detail": "Velikost detailu",
       "detailTip": "Vzdálenost mezi body meshe v mm. Menší hodnota znamená jemnější detail a víc trojúhelníků."
     },

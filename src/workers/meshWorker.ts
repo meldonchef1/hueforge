@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-import { applyBrightness, type BrightnessSettings } from '../core/brightness';
+import { alphaField, applyBrightness, isOpaque, type BrightnessSettings, type GrayField } from '../core/brightness';
 import { buildHeightMap, type BorderSettings } from '../core/heightmap';
 import { buildMesh } from '../core/mesh';
 
@@ -28,6 +28,8 @@ export interface BuildMessage {
   firstLayerHeight: number;
   border: BorderSettings;
   brightness: BrightnessSettings;
+  /** Cut the model to the image's opaque area instead of filling a rectangle. */
+  cropToAlpha: boolean;
 }
 
 export type WorkerRequest = LoadImageMessage | BuildMessage;
@@ -54,16 +56,28 @@ export interface BuildFailure {
 
 export type WorkerResponse = BuildResult | BuildFailure;
 
-let image: { pixels: Uint8ClampedArray; width: number; height: number } | null = null;
+interface LoadedImage {
+  pixels: Uint8ClampedArray;
+  width: number;
+  height: number;
+  /** Opacity per pixel, or null when the image has no transparency at all. */
+  alpha: GrayField | null;
+}
+
+let image: LoadedImage | null = null;
 
 self.onmessage = (event: MessageEvent<WorkerRequest>) => {
   const request = event.data;
 
   if (request.type === 'image') {
+    const pixels = new Uint8ClampedArray(request.pixels);
+    // Scanned once per image rather than once per rebuild.
+    const alpha = alphaField(pixels, request.width, request.height);
     image = {
-      pixels: new Uint8ClampedArray(request.pixels),
+      pixels,
       width: request.width,
       height: request.height,
+      alpha: isOpaque(alpha) ? null : alpha,
     };
     return;
   }
@@ -73,16 +87,20 @@ self.onmessage = (event: MessageEvent<WorkerRequest>) => {
   try {
     const field = applyBrightness(image.pixels, image.width, image.height, request.brightness);
 
-    const map = buildHeightMap(field, {
-      widthMm: request.widthMm,
-      heightMm: request.heightMm,
-      detailMm: request.detailMm,
-      baseThickness: request.baseThickness,
-      maxDepth: request.maxDepth,
-      layerHeight: request.layerHeight,
-      firstLayerHeight: request.firstLayerHeight,
-      border: request.border,
-    });
+    const map = buildHeightMap(
+      field,
+      {
+        widthMm: request.widthMm,
+        heightMm: request.heightMm,
+        detailMm: request.detailMm,
+        baseThickness: request.baseThickness,
+        maxDepth: request.maxDepth,
+        layerHeight: request.layerHeight,
+        firstLayerHeight: request.firstLayerHeight,
+        border: request.border,
+      },
+      request.cropToAlpha ? (image.alpha ?? undefined) : undefined,
+    );
 
     const mesh = buildMesh(map);
 

@@ -30,6 +30,7 @@ export const defaultGeometry = (): ModelGeometry => ({
   baseThickness: 0.16,
   maxDepth: 2.56,
   dynamicDepth: true,
+  cropToAlpha: true,
   brightness: defaultBrightnessSettings(),
 });
 
