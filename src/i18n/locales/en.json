@@ -113,6 +113,50 @@
       "height": "height"
     }
   },
+  "library": {
+    "custom": "Custom",
+    "search": "Search filaments",
+    "brand": "Brand",
+    "allBrands": "All brands",
+    "sort": "Sort",
+    "sortName": "By name",
+    "sortColor": "By colour",
+    "sortTd": "By TD",
+    "ownedOnly": "Only what I have",
+    "owned": "I have this",
+    "name": "Filament name",
+    "color": "Colour of {{name}}",
+    "td": "TD of {{name}}",
+    "tdTip": "Transmission distance in mm — how thick this filament has to be before it stops letting light through. Low means opaque.",
+    "addToStack": "Add to layers",
+    "remove": "Delete filament",
+    "new": "New",
+    "newBrand": "Custom",
+    "newName": "New filament",
+    "import": "Import",
+    "export": "Export",
+    "empty": "Nothing here yet. Try another tab or clear the filter."
+  },
+  "layers": {
+    "empty": {
+      "title": "No filaments yet",
+      "hint": "Drag a filament here from the library, or add it with the + button on its row."
+    },
+    "dropHint": "Drop another here",
+    "dropZone": "Filament layers",
+    "slider": "Swap height for {{name}}",
+    "td": "TD of {{name}}",
+    "tdTip": "Transmission distance in mm. Changes the library too — it is a property of the material.",
+    "remove": "Remove from layers",
+    "missing": "Missing filament"
+  },
+  "colorCore": {
+    "empty": "Add filaments",
+    "layer": "Layer",
+    "marker": "Swap to {{name}} at layer {{layer}}",
+    "showTdTip": "Switches the column between simulated colour and each layer's TD.",
+    "addSwapTip": "Turns on adding a swap by clicking in the column."
+  },
   "geometry": {
     "size": {
       "group": "Size",

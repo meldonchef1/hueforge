@@ -1,7 +1,8 @@
 import type { BrightnessSettings } from '../core/brightness';
 import type { BorderSettings } from '../core/heightmap';
+import type { StackSlot } from '../core/stack';
 
-export type { BrightnessSettings, BorderSettings };
+export type { BrightnessSettings, BorderSettings, StackSlot };
 
 export type PanelId =
   | 'filamentLibrary'
@@ -67,6 +68,8 @@ export interface DocState {
   mode: PrintMode;
   heights: LayerHeights;
   geometry: ModelGeometry;
+  /** Ordered by startLayer, bottom first. */
+  stack: StackSlot[];
 }
 
 /** The loaded image. Pixels are too big for history or localStorage, so this

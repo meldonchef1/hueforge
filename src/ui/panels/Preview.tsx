@@ -4,6 +4,7 @@ import { Viewer } from '../../render/Viewer';
 import { meshBus } from '../../store/meshBus';
 import { useAppStore } from '../../store/useAppStore';
 import { LIGHT_TEMPERATURES } from '../../store/types';
+import { useSimulatedColumn } from '../hooks/useSimulatedColumn';
 import styles from './Preview.module.css';
 
 export function Preview() {
@@ -19,6 +20,8 @@ export function Preview() {
   const lightIntensity = useAppStore((s) => s.view.lightIntensity);
   const cameraResetNonce = useAppStore((s) => s.view.cameraResetNonce);
   const setStatus = useAppStore((s) => s.setStatus);
+  const heights = useAppStore((s) => s.doc.heights);
+  const column = useSimulatedColumn();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -57,6 +60,14 @@ export function Preview() {
   }, [setStatus]);
 
   useEffect(() => viewerRef.current?.setWireframe(wireframe), [wireframe]);
+
+  useEffect(() => {
+    viewerRef.current?.setSimulation(
+      column.length > 0 ? column : null,
+      heights.layerHeight,
+      heights.firstLayerHeight,
+    );
+  }, [column, heights]);
 
   useEffect(() => {
     viewerRef.current?.setLight({
