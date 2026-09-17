@@ -2,6 +2,7 @@
 import { alphaField, applyBrightness, isOpaque, type BrightnessSettings, type GrayField } from '../core/brightness';
 import { buildHeightMap, type BorderSettings } from '../core/heightmap';
 import { buildMesh } from '../core/mesh';
+import { applyStrokes, type SpotStroke } from '../core/spotFix';
 
 /**
  * The image is sent once and kept here; every later change sends parameters
@@ -30,6 +31,8 @@ export interface BuildMessage {
   brightness: BrightnessSettings;
   /** Cut the model to the image's opaque area instead of filling a rectangle. */
   cropToAlpha: boolean;
+  /** Manual touch-ups, replayed on top of the brightness field. */
+  spotFix: SpotStroke[];
 }
 
 export type WorkerRequest = LoadImageMessage | BuildMessage;
@@ -86,6 +89,7 @@ self.onmessage = (event: MessageEvent<WorkerRequest>) => {
 
   try {
     const field = applyBrightness(image.pixels, image.width, image.height, request.brightness);
+    applyStrokes(field, request.spotFix);
 
     const map = buildHeightMap(
       field,

@@ -1,8 +1,9 @@
 import type { BrightnessSettings } from '../core/brightness';
 import type { BorderSettings } from '../core/heightmap';
 import type { StackSlot } from '../core/stack';
+import type { SpotStroke } from '../core/spotFix';
 
-export type { BrightnessSettings, BorderSettings, StackSlot };
+export type { BrightnessSettings, BorderSettings, StackSlot, SpotStroke };
 
 export type PanelId =
   | 'filamentLibrary'
@@ -75,6 +76,8 @@ export interface DocState {
   geometry: ModelGeometry;
   /** Ordered by startLayer, bottom first. */
   stack: StackSlot[];
+  /** Manual height touch-ups, replayed over the brightness field. */
+  spotFix: SpotStroke[];
 }
 
 /** The loaded image. Pixels are too big for history or localStorage, so this
@@ -94,11 +97,23 @@ export interface ComputedState {
   error: string | null;
 }
 
+/** How the preview is compared against the source image. */
+export type CompareMode = 'off' | 'split' | 'overlay';
+
 /** Preview-only state. Not part of the project, so not undoable. */
 export interface ViewState {
   light: LightKind;
   lightIntensity: number;
   wireframe: boolean;
+  compare: CompareMode;
+  /** True while the SpotFix brush is armed. */
+  brushActive: boolean;
+  /** Brush radius as a fraction of the image's shorter side. */
+  brushRadius: number;
+  /** Positive lifts the surface, negative lowers it. */
+  brushStrength: number;
+  /** Where the split sits, or how opaque the overlay is, 0..1. */
+  compareAmount: number;
   /** Vertical slice through the stack, 0 = base only, 1 = whole model. */
   sliceHeight: number;
   /** Bumped to ask the renderer for a camera reset. */

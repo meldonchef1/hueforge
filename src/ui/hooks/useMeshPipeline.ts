@@ -14,6 +14,7 @@ const REBUILD_DELAY = 140;
 export function useMeshPipeline() {
   const pixels = useAppStore((s) => s.source.pixels);
   const geometry = useAppStore((s) => s.doc.geometry);
+  const spotFix = useAppStore((s) => s.doc.spotFix);
   const heights = useAppStore((s) => s.doc.heights);
   const setComputed = useAppStore((s) => s.setComputed);
 
@@ -95,10 +96,11 @@ export function useMeshPipeline() {
         border: geometry.border,
         brightness: geometry.brightness,
         cropToAlpha: geometry.cropToAlpha,
+        spotFix,
       };
       instance.postMessage(message);
     }, REBUILD_DELAY);
 
     return () => clearTimeout(timer.current);
-  }, [pixels, geometry, heights, setComputed]);
+  }, [pixels, geometry, heights, spotFix, setComputed]);
 }

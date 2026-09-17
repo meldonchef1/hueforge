@@ -51,10 +51,11 @@ a později přesunout do Web Workeru nebo do Rustu.
 | 2. MVP: obrázek, výšková mapa, geometrie, export STL               | hotovo   |
 | 3. Simulace: knihovna filamentů, vrstvy, barevný sloupec, náhled   | hotovo   |
 | 4. Kalibrace: testovací vzorky, ladění podle reálných tisků        | hotovo   |
-| 5. Pohodlí: SpotFix, řez výškou, porovnání, projekty, 3MF, průvodce | čeká     |
+| 5. Pohodlí: SpotFix, řez výškou, porovnání, projekty, 3MF, průvodce | hotovo   |
 
-Panely, které patří k pozdějším milníkům, jsou v rozvržení už teď a říkají,
-ve kterém milníku se naplní.
+Projekt se ukládá do jednoho souboru `.hueforge` (obrázek, nastavení, stack
+i rozvržení panelů) a rozdělaná práce přežije zavření karty — obrázek se sám
+ukládá do prohlížeče.
 
 Obrázek s průhledným pozadím (logo, vyříznutý motiv) dá model ve svém tvaru,
 ne desku — model kopíruje neprůhlednou část a stěny jdou po obvodu tvaru

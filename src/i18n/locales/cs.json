@@ -13,7 +13,6 @@
       "new": "Nový projekt",
       "open": "Otevřít…",
       "save": "Uložit",
-      "saveAs": "Uložit jako…",
       "exportStl": "Exportovat STL",
       "export3mf": "Exportovat 3MF",
       "exportSwaps": "Exportovat instrukce výměn",
@@ -68,8 +67,9 @@
       "group": "Pohled",
       "resetCamera": "Reset pohledu",
       "wireframe": "Drátový model",
-      "regenerateMesh": "Přegenerovat mesh",
-      "describe": "Popis nastavení"
+      "describe": "Popis nastavení",
+      "describeTip": "Zkopíruje textové shrnutí stacku do schránky, ať se dá sdílet.",
+      "describeDone": "Zkopírováno"
     },
     "mode": {
       "group": "Režim",
@@ -287,5 +287,69 @@
     "close": "Zavřít",
     "cancel": "Zrušit",
     "notImplemented": "Tahle funkce přijde v dalším milníku."
+  },
+  "slice": {
+    "label": "Řez výškou",
+    "full": "Celý",
+    "reset": "Zobrazit celý model"
+  },
+  "compare": {
+    "group": "Porovnání",
+    "off": "Vypnuto",
+    "split": "Dělicí čára",
+    "splitTip": "Přetažením čáry porovnáš náhled se zdrojovým obrázkem.",
+    "overlay": "Překrytí",
+    "overlayTip": "Položí zdrojový obrázek přes náhled s nastavitelnou průhledností.",
+    "amount": "Krytí",
+    "handle": "Posunout dělicí čáru"
+  },
+  "spotFix": {
+    "group": "SpotFix",
+    "brush": "Štětec",
+    "brushTip": "Zapne ruční úpravu výšky. Táhni po modelu v náhledu; otáčení je zatím vypnuté.",
+    "size": "Velikost",
+    "strength": "Síla",
+    "strengthTip": "Kladná hodnota místo zvedne, záporná ho zapustí.",
+    "clear": "Zrušit úpravy"
+  },
+  "guide": {
+    "title": "Průvodce prvním tiskem",
+    "lead": "Čtyři kroky od obrázku k modelu, který jde do tiskárny.",
+    "image": {
+      "title": "Nahraj obrázek",
+      "body": "Vpravo v panelu Zdrojový obrázek — přetažením, kliknutím nebo přes Ctrl+V. Jas obrázku určí výšku reliéfu."
+    },
+    "filaments": {
+      "title": "Vyber filamenty",
+      "body": "Vlevo v knihovně klikni na + u těch, které máš doma. Začni tmavým dole a pokračuj ke světlejším."
+    },
+    "swaps": {
+      "title": "Nastav výměny",
+      "body": "Posuvníky dole určují, ve které vrstvě se filament mění. Barevný sloupec uprostřed ukazuje, co z toho vyjde."
+    },
+    "export": {
+      "title": "Vyexportuj",
+      "body": "Soubor → Exportovat STL nebo 3MF pro slicer, a Exportovat instrukce výměn jako tahák k tiskárně."
+    },
+    "calibrationNote": "TD hodnoty ve výchozí knihovně jsou odhad, ne měření. Než se na barvy v náhledu spolehneš, změř si TD svých filamentů — v knihovně tlačítkem ⌗ u jejich řádku."
+  },
+  "shortcuts": {
+    "save": "Uložit projekt",
+    "exportStl": "Exportovat STL",
+    "undo": "Zpět",
+    "redo": "Znovu",
+    "resetCamera": "Reset pohledu",
+    "pasteImage": "Vložit obrázek ze schránky",
+    "compare": "Přepnout porovnání",
+    "brush": "Přepnout SpotFix štětec",
+    "note": "Zkratky nefungují, když píšeš do pole. Dvojklik v náhledu taky resetuje pohled."
+  },
+  "about": {
+    "body": "Nástroj pro přípravu barevných 3D tisků z obrázku. Všechno běží v prohlížeči — data zůstávají u tebe a nic se nikam neposílá."
+  },
+  "describe": {
+    "heading": "HueForge — model {{width}} × {{height}} mm, hluboký {{depth}} mm",
+    "layers": "Vrstva {{layer}} mm, první {{first}} mm, celkem {{count}} vrstev",
+    "step": "Vrstva {{layer}}: {{filament}} (TD {{td}})"
   }
 }

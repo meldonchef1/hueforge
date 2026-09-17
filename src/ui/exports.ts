@@ -1,5 +1,7 @@
 import i18n from '../i18n';
 import { writeBinaryStl } from '../core/stl';
+import { write3mf } from '../core/threemf';
+import { activeViewer } from '../render/activeViewer';
 import { buildMesh } from '../core/mesh';
 import { buildWedgeHeightMap, swapLayer, wedgeTable, type WedgeSettings } from '../core/calibration';
 import { swapSteps } from '../core/swaps';
@@ -22,6 +24,37 @@ export function exportStl(): boolean {
   const buffer = writeBinaryStl(mesh, `HueForge ${name}`);
 
   downloadBlob(new Blob([buffer], { type: 'model/stl' }), `${name}.stl`);
+  return true;
+}
+
+/** Writes the current mesh as 3MF, which carries units and a name. */
+export function export3mf(): boolean {
+  const mesh = meshBus.get();
+  if (!mesh || mesh.triangleCount === 0) return false;
+
+  const { source, doc } = useAppStore.getState();
+  const name = exportBaseName(source.name || doc.name);
+  // write3mf only reads the triangle soup, so the worker's result fits as is.
+  const file = write3mf({ ...mesh, size: { x: 0, y: 0, z: mesh.maxHeight } }, name);
+
+  downloadBlob(new Blob([file.buffer as ArrayBuffer], { type: 'model/3mf' }), `${name}.3mf`);
+  return true;
+}
+
+/** Saves what the preview is showing as a PNG. */
+export function exportPreviewPng(): boolean {
+  const viewer = activeViewer.get();
+  if (!viewer) return false;
+
+  const { source, doc } = useAppStore.getState();
+  const name = exportBaseName(source.name || doc.name);
+  const dataUrl = viewer.snapshot();
+
+  const binary = atob(dataUrl.split(',')[1] ?? '');
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+
+  downloadBlob(new Blob([bytes.buffer], { type: 'image/png' }), `${name}-nahled.png`);
   return true;
 }
 

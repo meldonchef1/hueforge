@@ -1,9 +1,12 @@
 import { useTranslation } from 'react-i18next';
+import { useRef, useState } from 'react';
 import { Menu, type MenuDefinition } from '../components/Menu';
 import { useAppStore } from '../../store/useAppStore';
 import { PANEL_IDS } from '../../store/defaults';
-import { exportStl, exportSwapInstructions } from '../exports';
+import { export3mf, exportPreviewPng, exportStl, exportSwapInstructions } from '../exports';
 import { loadImageFile } from '../loadImage';
+import { openProjectFile, PROJECT_EXTENSION, saveProject } from '../projectFile';
+import { AboutDialog, FirstPrintGuide, ShortcutsDialog } from './HelpDialogs';
 import type { Language, Theme, Units } from '../../store/types';
 
 /** Items whose feature lands in a later milestone are shown but disabled. */
@@ -27,6 +30,8 @@ export function MenuBar() {
   const setImage = useAppStore((s) => s.setImage);
   const hasMesh = useAppStore((s) => s.computed.triangles > 0);
   const hasStack = useAppStore((s) => s.doc.stack.length > 0);
+  const projectRef = useRef<HTMLInputElement>(null);
+  const [dialog, setDialog] = useState<'guide' | 'shortcuts' | 'about' | null>(null);
 
   /** Reads an image straight from the clipboard; Ctrl+V works regardless. */
   const pasteImage = async () => {
@@ -51,9 +56,17 @@ export function MenuBar() {
       items: [
         { kind: 'action', label: t('menu.file.new'), onSelect: newProject },
         { kind: 'separator' },
-        { ...PLANNED, label: t('menu.file.open') },
-        { ...PLANNED, label: t('menu.file.save'), shortcut: 'Ctrl+S' },
-        { ...PLANNED, label: t('menu.file.saveAs') },
+        {
+          kind: 'action',
+          label: t('menu.file.open'),
+          onSelect: () => projectRef.current?.click(),
+        },
+        {
+          kind: 'action',
+          label: t('menu.file.save'),
+          shortcut: 'Ctrl+S',
+          onSelect: saveProject,
+        },
         { kind: 'separator' },
         {
           kind: 'action',
@@ -61,14 +74,23 @@ export function MenuBar() {
           onSelect: () => void exportStl(),
           disabled: !hasMesh,
         },
-        { ...PLANNED, label: t('menu.file.export3mf') },
+        {
+          kind: 'action',
+          label: t('menu.file.export3mf'),
+          onSelect: () => void export3mf(),
+          disabled: !hasMesh,
+        },
         {
           kind: 'action',
           label: t('menu.file.exportSwaps'),
           onSelect: () => void exportSwapInstructions(),
           disabled: !hasStack,
         },
-        { ...PLANNED, label: t('menu.file.exportPng') },
+        {
+          kind: 'action',
+          label: t('menu.file.exportPng'),
+          onSelect: () => void exportPreviewPng(),
+        },
       ],
     },
     {
@@ -135,13 +157,41 @@ export function MenuBar() {
       id: 'help',
       label: t('menu.help.label'),
       items: [
-        { ...PLANNED, label: t('menu.help.firstPrintGuide') },
-        { ...PLANNED, label: t('menu.help.shortcuts') },
+        {
+          kind: 'action',
+          label: t('menu.help.firstPrintGuide'),
+          onSelect: () => setDialog('guide'),
+        },
+        { kind: 'action', label: t('menu.help.shortcuts'), onSelect: () => setDialog('shortcuts') },
         { kind: 'separator' },
-        { ...PLANNED, label: t('app.version', { version: __APP_VERSION__ }) },
+        {
+          kind: 'action',
+          label: t('app.version', { version: __APP_VERSION__ }),
+          onSelect: () => setDialog('about'),
+        },
       ],
     },
   ];
 
-  return <Menu menus={menus} />;
+  return (
+    <>
+      <Menu menus={menus} />
+      <input
+        ref={projectRef}
+        type="file"
+        accept={`${PROJECT_EXTENSION},application/json`}
+        hidden
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          // Reset so picking the same file twice in a row still fires.
+          event.target.value = '';
+          if (file) void openProjectFile(file);
+        }}
+      />
+
+      {dialog === 'guide' && <FirstPrintGuide onClose={() => setDialog(null)} />}
+      {dialog === 'shortcuts' && <ShortcutsDialog onClose={() => setDialog(null)} />}
+      {dialog === 'about' && <AboutDialog onClose={() => setDialog(null)} />}
+    </>
+  );
 }

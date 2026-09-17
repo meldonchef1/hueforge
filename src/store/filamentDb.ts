@@ -1,56 +1,30 @@
 import { parseFilaments, type Filament } from '../core/filament';
+import { FILAMENT_STORE, openDb, runRequest } from './db';
 
 /**
  * The filament library lives in IndexedDB rather than localStorage: it grows
  * with every filament the user adds and outlives any single project.
  */
 
-const DB_NAME = 'hueforge';
-const DB_VERSION = 1;
-const STORE = 'filaments';
-
-function open(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = () => {
-      if (!request.result.objectStoreNames.contains(STORE)) {
-        request.result.createObjectStore(STORE, { keyPath: 'id' });
-      }
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error ?? new Error('IndexedDB unavailable'));
-  });
-}
-
-function run<T>(mode: IDBTransactionMode, work: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
-  return open().then(
-    (db) =>
-      new Promise<T>((resolve, reject) => {
-        const transaction = db.transaction(STORE, mode);
-        const request = work(transaction.objectStore(STORE));
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error ?? new Error('IndexedDB request failed'));
-        transaction.oncomplete = () => db.close();
-      }),
-  );
-}
-
 export async function readAll(): Promise<Filament[]> {
-  const rows = await run<unknown[]>('readonly', (store) => store.getAll());
+  const rows = await runRequest<unknown[]>(FILAMENT_STORE, 'readonly', (store) => store.getAll());
   return parseFilaments(rows);
 }
 
 export async function writeAll(filaments: Filament[]): Promise<void> {
-  const db = await open();
-  await new Promise<void>((resolve, reject) => {
-    const transaction = db.transaction(STORE, 'readwrite');
-    const store = transaction.objectStore(STORE);
-    store.clear();
-    for (const filament of filaments) store.put(filament);
-    transaction.oncomplete = () => resolve();
-    transaction.onerror = () => reject(transaction.error ?? new Error('IndexedDB write failed'));
-  });
-  db.close();
+  const db = await openDb();
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const transaction = db.transaction(FILAMENT_STORE, 'readwrite');
+      const store = transaction.objectStore(FILAMENT_STORE);
+      store.clear();
+      for (const filament of filaments) store.put(filament);
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error ?? new Error('IndexedDB write failed'));
+    });
+  } finally {
+    db.close();
+  }
 }
 
 /** Fetches the bundled library that ships with the app. */

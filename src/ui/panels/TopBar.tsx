@@ -1,10 +1,12 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NumberInput } from '../components/NumberInput';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { Slider } from '../components/Slider';
 import { useAppStore } from '../../store/useAppStore';
 import { isMultipleOf } from '../../core/units';
-import type { LightKind, PrintMode } from '../../store/types';
+import { copyDescription } from '../describe';
+import type { CompareMode, LightKind, PrintMode } from '../../store/types';
 import styles from './TopBar.module.css';
 
 export function TopBar() {
@@ -17,6 +19,17 @@ export function TopBar() {
   const view = useAppStore((s) => s.view);
   const setView = useAppStore((s) => s.setView);
   const resetCamera = useAppStore((s) => s.resetCamera);
+  const clearSpotFix = useAppStore((s) => s.clearSpotFix);
+  const hasSpotFix = useAppStore((s) => s.doc.spotFix.length > 0);
+  const hasStack = useAppStore((s) => s.doc.stack.length > 0);
+  const [copied, setCopied] = useState(false);
+
+  // The "copied" label is a flash of feedback, not a state to stay in.
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(timer);
+  }, [copied]);
 
   const multipleOfLayer = (value: number) =>
     isMultipleOf(value, heights.layerHeight)
@@ -61,12 +74,83 @@ export function TopBar() {
         >
           {t('topBar.view.wireframe')}
         </button>
-        <button type="button" className={styles.button} disabled>
-          {t('topBar.view.regenerateMesh')}
+        <button
+          type="button"
+          className={styles.button}
+          disabled={!hasStack}
+          title={t('topBar.view.describeTip')}
+          onClick={() => void copyDescription().then(setCopied)}
+        >
+          {copied ? t('topBar.view.describeDone') : t('topBar.view.describe')}
         </button>
-        <button type="button" className={styles.button} disabled>
-          {t('topBar.view.describe')}
+      </Group>
+
+      <Group label={t('spotFix.group')}>
+        <button
+          type="button"
+          className={styles.button}
+          data-active={view.brushActive || undefined}
+          aria-pressed={view.brushActive}
+          title={t('spotFix.brushTip')}
+          onClick={() => setView({ brushActive: !view.brushActive })}
+        >
+          {t('spotFix.brush')}
         </button>
+        {view.brushActive && (
+          <>
+            <Slider
+              label={t('spotFix.size')}
+              value={view.brushRadius}
+              min={0.01}
+              max={0.3}
+              step={0.005}
+              onChange={(brushRadius) => setView({ brushRadius })}
+              format={(value) => `${Math.round(value * 100)} %`}
+            />
+            <Slider
+              label={t('spotFix.strength')}
+              tooltip={t('spotFix.strengthTip')}
+              value={view.brushStrength}
+              min={-0.5}
+              max={0.5}
+              step={0.01}
+              onChange={(brushStrength) => setView({ brushStrength })}
+              format={(value) => value.toFixed(2)}
+            />
+          </>
+        )}
+        <button
+          type="button"
+          className={styles.button}
+          disabled={!hasSpotFix}
+          onClick={clearSpotFix}
+        >
+          {t('spotFix.clear')}
+        </button>
+      </Group>
+
+      <Group label={t('compare.group')}>
+        <SegmentedControl<CompareMode>
+          ariaLabel={t('compare.group')}
+          value={view.compare}
+          onChange={(compare) => setView({ compare })}
+          options={[
+            { value: 'off', label: t('compare.off') },
+            { value: 'split', label: t('compare.split'), tooltip: t('compare.splitTip') },
+            { value: 'overlay', label: t('compare.overlay'), tooltip: t('compare.overlayTip') },
+          ]}
+        />
+        {view.compare === 'overlay' && (
+          <Slider
+            label={t('compare.amount')}
+            value={view.compareAmount}
+            min={0}
+            max={1}
+            step={0.01}
+            onChange={(compareAmount) => setView({ compareAmount })}
+            format={(value) => `${Math.round(value * 100)} %`}
+          />
+        )}
       </Group>
 
       <Group label={t('topBar.mode.group')}>

@@ -59,3 +59,7 @@
   background: var(--danger);
   color: #fff;
 }
+
+.canvas[data-painting] {
+  cursor: crosshair;
+}

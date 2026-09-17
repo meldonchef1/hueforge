@@ -16,14 +16,22 @@ import type { Rgb } from '../core/color';
  * the colour core showing the same thing by construction.
  */
 
+// The clipping chunks are what let the height-slice plane cut this material;
+// a custom ShaderMaterial does not get them for free the way built-ins do.
 const vertexShader = /* glsl */ `
 varying float vHeight;
 varying vec3 vNormal;
 
+#include <clipping_planes_pars_vertex>
+
 void main() {
   vHeight = position.z;
   vNormal = normalize(normalMatrix * normal);
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+  gl_Position = projectionMatrix * mvPosition;
+
+  #include <clipping_planes_vertex>
 }
 `;
 
@@ -38,7 +46,11 @@ uniform float uShading;
 varying float vHeight;
 varying vec3 vNormal;
 
+#include <clipping_planes_pars_fragment>
+
 void main() {
+  #include <clipping_planes_fragment>
+
   // Height back to a layer index, matching layerCount() on the CPU.
   float layer = 1.0 + max(0.0, (vHeight - uFirstLayerHeight) / uLayerHeight);
   float index = clamp(layer - 0.5, 0.0, uLayers - 0.5);
@@ -85,6 +97,7 @@ export class SimulationMaterial extends ShaderMaterial {
     super({
       vertexShader,
       fragmentShader,
+      clipping: true,
       uniforms: {
         uLut: { value: null },
         uLayers: { value: 1 },

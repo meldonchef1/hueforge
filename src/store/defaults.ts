@@ -45,6 +45,7 @@ export const defaultDoc = (): DocState => ({
   },
   geometry: defaultGeometry(),
   stack: [],
+  spotFix: [],
 });
 
 export const defaultSource = (): SourceState => ({ pixels: null, name: '' });
@@ -61,6 +62,11 @@ export const defaultView = (): ViewState => ({
   light: 'neutral',
   lightIntensity: 1,
   wireframe: false,
+  compare: 'off',
+  brushActive: false,
+  brushRadius: 0.06,
+  brushStrength: 0.15,
+  compareAmount: 0.5,
   sliceHeight: 1,
   cameraResetNonce: 0,
 });
