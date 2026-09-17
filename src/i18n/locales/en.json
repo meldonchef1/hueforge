@@ -13,7 +13,6 @@
       "new": "New project",
       "open": "Open…",
       "save": "Save",
-      "saveAs": "Save as…",
       "exportStl": "Export STL",
       "export3mf": "Export 3MF",
       "exportSwaps": "Export swap instructions",
@@ -68,8 +67,9 @@
       "group": "View",
       "resetCamera": "Reset view",
       "wireframe": "Wireframe",
-      "regenerateMesh": "Regenerate mesh",
-      "describe": "Describe settings"
+      "describe": "Describe settings",
+      "describeTip": "Copies a text summary of the stack to the clipboard, ready to share.",
+      "describeDone": "Copied"
     },
     "mode": {
       "group": "Mode",
@@ -285,5 +285,69 @@
     "close": "Close",
     "cancel": "Cancel",
     "notImplemented": "This feature is coming in a later milestone."
+  },
+  "slice": {
+    "label": "Height slice",
+    "full": "Full",
+    "reset": "Show the whole model"
+  },
+  "compare": {
+    "group": "Compare",
+    "off": "Off",
+    "split": "Split line",
+    "splitTip": "Drag the line to compare the preview against the source image.",
+    "overlay": "Overlay",
+    "overlayTip": "Lays the source image over the preview at an adjustable opacity.",
+    "amount": "Opacity",
+    "handle": "Move the split line"
+  },
+  "spotFix": {
+    "group": "SpotFix",
+    "brush": "Brush",
+    "brushTip": "Turns on manual height touch-ups. Drag across the model; orbiting is off while it is on.",
+    "size": "Size",
+    "strength": "Strength",
+    "strengthTip": "A positive value lifts the spot, a negative one sinks it.",
+    "clear": "Clear touch-ups"
+  },
+  "guide": {
+    "title": "First print guide",
+    "lead": "Four steps from a picture to a model your slicer can take.",
+    "image": {
+      "title": "Load an image",
+      "body": "In the Source image panel on the right — drop it, click, or paste with Ctrl+V. Its brightness becomes the height of the relief."
+    },
+    "filaments": {
+      "title": "Pick filaments",
+      "body": "In the library on the left, hit + on the ones you own. Start dark at the bottom and work towards lighter colours."
+    },
+    "swaps": {
+      "title": "Set the swaps",
+      "body": "The sliders below decide which layer each filament starts on. The colour core in the middle shows what comes out."
+    },
+    "export": {
+      "title": "Export",
+      "body": "File → Export STL or 3MF for the slicer, and Export swap instructions as a crib sheet for the printer."
+    },
+    "calibrationNote": "TD values in the bundled library are guesses, not measurements. Before trusting the preview's colours, measure your own filaments — the ⌗ button on each library row."
+  },
+  "shortcuts": {
+    "save": "Save project",
+    "exportStl": "Export STL",
+    "undo": "Undo",
+    "redo": "Redo",
+    "resetCamera": "Reset view",
+    "pasteImage": "Paste image from clipboard",
+    "compare": "Cycle compare mode",
+    "brush": "Toggle the SpotFix brush",
+    "note": "Shortcuts stay out of the way while you are typing in a field. Double-clicking the preview also resets the view."
+  },
+  "about": {
+    "body": "A tool for preparing colour 3D prints from an image. Everything runs in the browser — your data stays with you and nothing is uploaded."
+  },
+  "describe": {
+    "heading": "HueForge — model {{width}} × {{height}} mm, {{depth}} mm deep",
+    "layers": "Layer {{layer}} mm, first {{first}} mm, {{count}} layers total",
+    "step": "Layer {{layer}}: {{filament}} (TD {{td}})"
   }
 }

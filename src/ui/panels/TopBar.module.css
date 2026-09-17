@@ -2,10 +2,11 @@
   display: flex;
   flex: 0 0 auto;
   align-items: stretch;
-  gap: var(--space-4);
+  /* Wraps rather than clipping: layer heights must stay reachable. */
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
   min-height: var(--h-topbar);
   padding: var(--space-2) var(--space-4);
-  overflow-x: auto;
   border-bottom: 1px solid var(--border-subtle);
   background: var(--bg-panel-header);
 }

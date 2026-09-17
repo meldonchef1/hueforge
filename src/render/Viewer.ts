@@ -4,10 +4,15 @@ import {
   BufferGeometry,
   Color,
   DirectionalLight,
+  DoubleSide,
   Mesh,
   MeshStandardMaterial,
   PerspectiveCamera,
+  Plane,
+  Raycaster,
   Scene,
+  Vector2,
+  Vector3 as ThreeVector3,
   WebGLRenderer,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -39,6 +44,9 @@ export class Viewer {
   private readonly fill: DirectionalLight;
   private readonly ambient: AmbientLight;
   private model: Mesh | null = null;
+  private readonly slicePlane: Plane;
+  private readonly raycaster = new Raycaster();
+  private readonly pointer = new Vector2();
 
   private frame = 0;
   private frames = 0;
@@ -63,8 +71,19 @@ export class Viewer {
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.08;
 
-    this.plainMaterial = new MeshStandardMaterial({ color: 0xcccccc, roughness: 0.85, metalness: 0 });
+    // Double-sided so a height slice shows the inside of the cut rather than
+    // looking straight through the model.
+    this.plainMaterial = new MeshStandardMaterial({
+      color: 0xcccccc,
+      roughness: 0.85,
+      metalness: 0,
+      side: DoubleSide,
+    });
     this.simulationMaterial = new SimulationMaterial();
+    this.simulationMaterial.side = DoubleSide;
+
+    this.renderer.localClippingEnabled = true;
+    this.slicePlane = new Plane(new ThreeVector3(0, 0, -1), Infinity);
 
     this.ambient = new AmbientLight(0xffffff, 0.5);
     this.key = new DirectionalLight(0xffffff, 2);
@@ -89,6 +108,8 @@ export class Viewer {
     geometry.setAttribute('position', new BufferAttribute(result.positions, 3));
     geometry.setAttribute('normal', new BufferAttribute(result.normals, 3));
     geometry.computeBoundingSphere();
+    // The brush maps a hit position back to image coordinates through this.
+    geometry.computeBoundingBox();
 
     this.model = new Mesh(geometry, this.activeMaterial());
     this.scene.add(this.model);
@@ -116,6 +137,52 @@ export class Viewer {
     }
   }
 
+  /**
+   * Cuts the model off at `fraction` of its height. 1 shows the whole thing,
+   * which means no clipping plane at all rather than one at the very top.
+   */
+  setSlice(fraction: number): void {
+    const full = fraction >= 1;
+    // The plane faces down, so its constant is the height it cuts at.
+    this.slicePlane.constant = full ? Infinity : Math.max(0.0001, this.modelHeight * fraction);
+
+    const planes = full ? [] : [this.slicePlane];
+    this.plainMaterial.clippingPlanes = planes;
+    this.simulationMaterial.clippingPlanes = planes;
+  }
+
+  /**
+   * Where a screen position lands on the model, as image coordinates. The model
+   * is a height map, so its XY maps straight onto the picture — no UV needed.
+   */
+  pick(ndcX: number, ndcY: number): { u: number; v: number } | null {
+    if (!this.model) return null;
+
+    this.pointer.set(ndcX, ndcY);
+    this.raycaster.setFromCamera(this.pointer, this.camera);
+
+    const hit = this.raycaster.intersectObject(this.model, false)[0];
+    if (!hit) return null;
+
+    const box = this.model.geometry.boundingBox;
+    if (!box) return null;
+
+    const width = box.max.x - box.min.x;
+    const height = box.max.y - box.min.y;
+    if (width <= 0 || height <= 0) return null;
+
+    return {
+      u: (hit.point.x - box.min.x) / width,
+      // Row 0 of the image sits at the back of the model, so Y runs backwards.
+      v: (box.max.y - hit.point.y) / height,
+    };
+  }
+
+  /** Painting and orbiting cannot both own the drag. */
+  setOrbitEnabled(enabled: boolean): void {
+    this.controls.enabled = enabled;
+  }
+
   setWireframe(on: boolean): void {
     this.plainMaterial.wireframe = on;
     this.simulationMaterial.wireframe = on;
@@ -138,6 +205,15 @@ export class Viewer {
     this.camera.position.set(0, -distance * 0.62, distance * 0.78);
     this.controls.target.set(0, 0, this.modelHeight / 2);
     this.controls.update();
+  }
+
+  /**
+   * PNG of what is on screen. The drawing buffer is not preserved, so the
+   * render and the read have to happen in the same task.
+   */
+  snapshot(): string {
+    this.renderer.render(this.scene, this.camera);
+    return this.renderer.domElement.toDataURL('image/png');
   }
 
   resize(width: number, height: number): void {

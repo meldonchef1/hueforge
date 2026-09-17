@@ -13,6 +13,7 @@ import {
 import { addSlot, moveSlot, removeSlot, setSlotStart } from '../core/stack';
 import { loadLibrary, writeAll } from './filamentDb';
 import type { Filament } from '../core/filament';
+import type { SpotStroke } from '../core/spotFix';
 import type {
   ComputedState,
   DocState,
@@ -69,7 +70,13 @@ export interface AppState {
   removeFromStack: (index: number) => void;
   moveStackSlot: (from: number, to: number) => void;
   setStackSlotStart: (index: number, startLayer: number) => void;
+
+  /** Records one brush stroke, so Ctrl+Z takes it back. */
+  addSpotStroke: (stroke: SpotStroke) => void;
+  clearSpotFix: () => void;
   setImage: (pixels: ImageData, name: string) => void;
+  /** Replaces the document and panel layout with an opened project. */
+  loadProject: (doc: DocState, layout: LayoutState) => void;
   clearImage: () => void;
   setComputed: (patch: Partial<ComputedState>) => void;
 
@@ -190,6 +197,14 @@ export const useAppStore = create<AppState>()(
       moveStackSlot: (from, to) =>
         get().commit((doc) => ({ ...doc, stack: moveSlot(doc.stack, from, to) })),
 
+      addSpotStroke: (stroke) => {
+        if (stroke.points.length === 0) return;
+        get().commit((doc) => ({ ...doc, spotFix: [...doc.spotFix, stroke] }));
+      },
+
+      clearSpotFix: () =>
+        get().commit((doc) => (doc.spotFix.length === 0 ? doc : { ...doc, spotFix: [] })),
+
       setStackSlotStart: (index, startLayer) => {
         const maxLayer = Math.max(0, get().computed.layers - 1);
         get().commit((doc) => ({
@@ -209,6 +224,17 @@ export const useAppStore = create<AppState>()(
       },
 
       clearImage: () => set({ source: defaultSource(), computed: defaultComputed() }),
+
+      loadProject: (doc, layout) =>
+        set((state) => ({
+          doc,
+          layout,
+          // The dock cannot be patched in place; remounting rebuilds it.
+          layoutNonce: state.layoutNonce + 1,
+          past: [],
+          future: [],
+          status: { ...state.status, saveState: 'saved' },
+        })),
 
       setComputed: (patch) => set((state) => ({ computed: { ...state.computed, ...patch } })),
 

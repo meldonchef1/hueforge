@@ -7,6 +7,7 @@ import { useFilamentLibrary } from './hooks/useFilamentLibrary';
 import { useThemeSync } from './hooks/useThemeSync';
 import { useLanguageSync } from './hooks/useLanguageSync';
 import { useAutosave } from './hooks/useAutosave';
+import { useImageAutosave } from './hooks/useImageAutosave';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useMeshPipeline } from './hooks/useMeshPipeline';
 import { useAppStore } from '../store/useAppStore';
@@ -18,6 +19,7 @@ export function App() {
   useThemeSync();
   useLanguageSync();
   useAutosave();
+  useImageAutosave();
   useKeyboardShortcuts();
   useMeshPipeline();
 

@@ -1,0 +1,75 @@
+.root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* Only the split handle should take clicks; the rest stays draggable 3D. */
+  pointer-events: none;
+}
+
+.imageWrap {
+  display: flex;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.root[data-mode='split'] .imageWrap {
+  background: var(--bg-viewport);
+}
+
+.image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 45%);
+}
+
+.handle {
+  position: absolute;
+  top: 50%;
+  width: 22px;
+  height: 46px;
+  margin: -23px 0 0 -11px;
+  border: 1px solid rgb(0 0 0 / 45%);
+  border-radius: var(--radius-full);
+  background: #fff;
+  color: #222;
+  font-size: var(--text-xs);
+  cursor: ew-resize;
+  pointer-events: auto;
+}
+
+.handle::before {
+  content: '⟨⟩';
+}
+
+.tagLeft,
+.tagRight {
+  position: absolute;
+  top: var(--space-3);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: rgb(0 0 0 / 45%);
+  color: #fff;
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tagLeft {
+  left: var(--space-3);
+}
+
+.tagRight {
+  right: var(--space-3);
+}
