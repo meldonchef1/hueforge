@@ -90,12 +90,13 @@ test('removes a filament from the stack through its context menu', async ({ page
 test('edits TD from the library and keeps it in the layer panel', async ({ page }) => {
   await addFilament(page, 'Černá');
 
-  const td = page.getByLabel('TD filamentu Černá').first();
-  await td.fill('3.5');
-  await td.blur();
+  // By role: the "measure TD" button carries a similar label.
+  const fields = page.getByRole('spinbutton', { name: 'TD filamentu Černá' });
+  await fields.first().fill('3.5');
+  await fields.first().blur();
 
   // Both panels read the same filament, so the layer slot must follow.
-  await expect(page.getByLabel('TD filamentu Černá').nth(1)).toHaveValue('3.5');
+  await expect(fields.nth(1)).toHaveValue('3.5');
 });
 
 test('adds a custom filament', async ({ page }) => {

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Menu, type MenuDefinition } from '../components/Menu';
 import { useAppStore } from '../../store/useAppStore';
 import { PANEL_IDS } from '../../store/defaults';
-import { exportStl } from '../exports';
+import { exportStl, exportSwapInstructions } from '../exports';
 import { loadImageFile } from '../loadImage';
 import type { Language, Theme, Units } from '../../store/types';
 
@@ -26,6 +26,7 @@ export function MenuBar() {
   const setSettings = useAppStore((s) => s.setSettings);
   const setImage = useAppStore((s) => s.setImage);
   const hasMesh = useAppStore((s) => s.computed.triangles > 0);
+  const hasStack = useAppStore((s) => s.doc.stack.length > 0);
 
   /** Reads an image straight from the clipboard; Ctrl+V works regardless. */
   const pasteImage = async () => {
@@ -61,7 +62,12 @@ export function MenuBar() {
           disabled: !hasMesh,
         },
         { ...PLANNED, label: t('menu.file.export3mf') },
-        { ...PLANNED, label: t('menu.file.exportSwaps') },
+        {
+          kind: 'action',
+          label: t('menu.file.exportSwaps'),
+          onSelect: () => void exportSwapInstructions(),
+          disabled: !hasStack,
+        },
         { ...PLANNED, label: t('menu.file.exportPng') },
       ],
     },

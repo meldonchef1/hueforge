@@ -1,4 +1,5 @@
 import { defaultBrightnessSettings } from '../core/brightness';
+import { TRANSMISSION_AT_TD } from '../core/simulation';
 import type {
   ComputedState,
   DocState,
@@ -69,6 +70,7 @@ export const defaultSettings = (): SettingsState => ({
   language: 'cs',
   units: 'mm',
   defaultPrinter: '',
+  transmissionAtTd: TRANSMISSION_AT_TD,
 });
 
 export const defaultLayout = (): LayoutState => ({

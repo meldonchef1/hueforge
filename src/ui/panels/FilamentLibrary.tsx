@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../store/useAppStore';
 import { hueOf, MATERIALS, parseFilaments, type Filament, type Material } from '../../core/filament';
 import { ColorSwatch } from '../components/ColorSwatch';
+import { CalibrationDialog } from './CalibrationDialog';
 import { downloadBlob } from '../download';
 import styles from './FilamentLibrary.module.css';
 
@@ -25,6 +26,7 @@ export function FilamentLibrary() {
   const [brand, setBrand] = useState('');
   const [sort, setSort] = useState<SortKey>('name');
   const [ownedOnly, setOwnedOnly] = useState(false);
+  const [calibrating, setCalibrating] = useState<Filament | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const brands = useMemo(
@@ -145,6 +147,7 @@ export function FilamentLibrary() {
             onChange={upsertFilament}
             onRemove={() => removeFilament(filament.id)}
             onAdd={() => addToStack(filament.id)}
+            onCalibrate={() => setCalibrating(filament)}
           />
         ))}
         {shown.length === 0 && <li className={styles.empty}>{t('library.empty')}</li>}
@@ -168,6 +171,10 @@ export function FilamentLibrary() {
           onChange={(event) => void importJson(event.target.files?.[0] ?? null)}
         />
       </div>
+
+      {calibrating && (
+        <CalibrationDialog filament={calibrating} onClose={() => setCalibrating(null)} />
+      )}
     </div>
   );
 }
@@ -177,9 +184,10 @@ interface RowProps {
   onChange: (filament: Filament) => void;
   onRemove: () => void;
   onAdd: () => void;
+  onCalibrate: () => void;
 }
 
-function FilamentRow({ filament, onChange, onRemove, onAdd }: RowProps) {
+function FilamentRow({ filament, onChange, onRemove, onAdd, onCalibrate }: RowProps) {
   const { t } = useTranslation();
   const [editing, setEditing] = useState(false);
 
@@ -242,6 +250,15 @@ function FilamentRow({ filament, onChange, onRemove, onAdd }: RowProps) {
         }}
       />
 
+      <button
+        type="button"
+        className={styles.calibrate}
+        title={t('library.calibrate', { name: filament.name })}
+        aria-label={t('library.calibrate', { name: filament.name })}
+        onClick={onCalibrate}
+      >
+        ⌗
+      </button>
       <button type="button" className={styles.add} title={t('library.addToStack')} onClick={onAdd}>
         +
       </button>
