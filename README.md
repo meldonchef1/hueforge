@@ -60,3 +60,8 @@ ve kterém milníku se naplní.
 
 Merge do `main` spustí build a deploy na GitHub Pages. Každý PR projde lintem,
 kontrolou typů, unit testy a UI testy.
+
+Jednorázově je potřeba v **Settings → Pages** nastavit **Source: GitHub Actions**.
+Workflow si Pages zapnout nemůže — `GITHUB_TOKEN` na vytvoření webu nemá právo,
+ani s `enablement: true`. Dokud to není nastavené, deploy padá na
+`Get Pages site failed`.
