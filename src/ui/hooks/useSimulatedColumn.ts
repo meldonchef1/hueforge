@@ -18,6 +18,7 @@ export function useSimulatedColumn(): Rgb[] {
   const light = useAppStore((s) => s.view.light);
   const intensity = useAppStore((s) => s.view.lightIntensity);
   const layers = useAppStore((s) => s.computed.layers);
+  const transmissionAtTd = useAppStore((s) => s.settings.transmissionAtTd);
 
   return useMemo(() => {
     const entries = resolveStack(stack, library);
@@ -29,6 +30,7 @@ export function useSimulatedColumn(): Rgb[] {
       light: kelvinToRgb(LIGHT_TEMPERATURES[light]),
       intensity,
       lithophane: mode === 'lithophane',
+      transmissionAtTd,
     });
-  }, [stack, library, heights, mode, light, intensity, layers]);
+  }, [stack, library, heights, mode, light, intensity, layers, transmissionAtTd]);
 }

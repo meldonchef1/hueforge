@@ -110,6 +110,11 @@ export interface SettingsState {
   language: Language;
   units: Units;
   defaultPrinter: string;
+  /**
+   * Light still passing at exactly TD thickness — the simulation's one free
+   * constant. Lives in settings so a real print can correct it.
+   */
+  transmissionAtTd: number;
 }
 
 export interface LayoutState {

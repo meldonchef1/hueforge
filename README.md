@@ -50,7 +50,7 @@ a později přesunout do Web Workeru nebo do Rustu.
 | 1. Kostra UI: dokovatelné panely, tmavé téma, deploy na Pages      | hotovo   |
 | 2. MVP: obrázek, výšková mapa, geometrie, export STL               | hotovo   |
 | 3. Simulace: knihovna filamentů, vrstvy, barevný sloupec, náhled   | hotovo   |
-| 4. Kalibrace: testovací vzorky, ladění podle reálných tisků        | čeká     |
+| 4. Kalibrace: testovací vzorky, ladění podle reálných tisků        | hotovo   |
 | 5. Pohodlí: SpotFix, řez výškou, porovnání, projekty, 3MF, průvodce | čeká     |
 
 Panely, které patří k pozdějším milníkům, jsou v rozvržení už teď a říkají,
@@ -61,8 +61,10 @@ ne desku — model kopíruje neprůhlednou část a stěny jdou po obvodu tvaru
 i kolem děr uvnitř. Vypnout to jde v Geometrii přepínačem „Podle průhlednosti".
 
 > **TD hodnoty ve výchozí knihovně jsou odhad, ne měření.** Než se na simulované
-> barvy začneš spoléhat, změř si TD vlastního filamentu — na to je milník 4.
-> Podrobnosti v [`public/filaments/README.md`](./public/filaments/README.md).
+> barvy začneš spoléhat, změř si TD vlastního filamentu: v knihovně filamentů
+> klikni u jeho řádku na ⌗, vytiskni schodový vzorek a zadej, na kolikátém
+> schodu zmizí podklad. Podrobnosti v
+> [`public/filaments/README.md`](./public/filaments/README.md).
 
 ## Nasazení
 
