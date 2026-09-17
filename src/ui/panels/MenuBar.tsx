@@ -2,6 +2,8 @@ import { useTranslation } from 'react-i18next';
 import { Menu, type MenuDefinition } from '../components/Menu';
 import { useAppStore } from '../../store/useAppStore';
 import { PANEL_IDS } from '../../store/defaults';
+import { exportStl } from '../exports';
+import { loadImageFile } from '../loadImage';
 import type { Language, Theme, Units } from '../../store/types';
 
 /** Items whose feature lands in a later milestone are shown but disabled. */
@@ -22,6 +24,24 @@ export function MenuBar() {
 
   const settings = useAppStore((s) => s.settings);
   const setSettings = useAppStore((s) => s.setSettings);
+  const setImage = useAppStore((s) => s.setImage);
+  const hasMesh = useAppStore((s) => s.computed.triangles > 0);
+
+  /** Reads an image straight from the clipboard; Ctrl+V works regardless. */
+  const pasteImage = async () => {
+    try {
+      for (const item of await navigator.clipboard.read()) {
+        const type = item.types.find((candidate) => candidate.startsWith('image/'));
+        if (!type) continue;
+        const blob = await item.getType(type);
+        const loaded = await loadImageFile(new File([blob], 'clipboard.png', { type }));
+        setImage(loaded.pixels, loaded.name);
+        return;
+      }
+    } catch {
+      // Denied or unsupported: the paste shortcut is still there.
+    }
+  };
 
   const menus: MenuDefinition[] = [
     {
@@ -34,7 +54,12 @@ export function MenuBar() {
         { ...PLANNED, label: t('menu.file.save'), shortcut: 'Ctrl+S' },
         { ...PLANNED, label: t('menu.file.saveAs') },
         { kind: 'separator' },
-        { ...PLANNED, label: t('menu.file.exportStl') },
+        {
+          kind: 'action',
+          label: t('menu.file.exportStl'),
+          onSelect: () => void exportStl(),
+          disabled: !hasMesh,
+        },
         { ...PLANNED, label: t('menu.file.export3mf') },
         { ...PLANNED, label: t('menu.file.exportSwaps') },
         { ...PLANNED, label: t('menu.file.exportPng') },
@@ -47,7 +72,12 @@ export function MenuBar() {
         { kind: 'action', label: t('menu.edit.undo'), onSelect: undo, shortcut: 'Ctrl+Z', disabled: !hasPast },
         { kind: 'action', label: t('menu.edit.redo'), onSelect: redo, shortcut: 'Ctrl+Y', disabled: !hasFuture },
         { kind: 'separator' },
-        { ...PLANNED, label: t('menu.edit.pasteImage'), shortcut: 'Ctrl+V' },
+        {
+          kind: 'action',
+          label: t('menu.edit.pasteImage'),
+          shortcut: 'Ctrl+V',
+          onSelect: () => void pasteImage(),
+        },
       ],
     },
     {

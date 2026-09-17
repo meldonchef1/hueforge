@@ -54,13 +54,13 @@ export const PANEL_DEFINITIONS: readonly PanelDefinition[] = [
   {
     id: 'layerSliders',
     placement: { direction: 'below' },
-    initialHeight: 220,
+    initialHeight: 300,
     component: LayerSliders,
   },
   {
     id: 'modelGeometry',
     placement: { direction: 'right', reference: 'layerSliders' },
-    initialWidth: 520,
+    initialWidth: 700,
     component: ModelGeometry,
   },
 ];

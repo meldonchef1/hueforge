@@ -1,0 +1,136 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-panel);
+}
+
+.stage {
+  display: flex;
+  position: relative;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: var(--space-3);
+  background: var(--bg-viewport);
+}
+
+.stage[data-dragging] {
+  outline: 2px dashed var(--accent);
+  outline-offset: -6px;
+  background: var(--accent-subtle);
+}
+
+.image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  cursor: crosshair;
+}
+
+.badge {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: rgb(0 0 0 / 35%);
+  color: var(--fg-secondary);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+.pin {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  margin: -5px 0 0 -5px;
+  border: 1.5px solid #fff;
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 0 1.5px rgb(0 0 0 / 60%);
+  pointer-events: none;
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: center;
+  max-width: 34ch;
+  padding: var(--space-6);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--fg-secondary);
+  text-align: center;
+  cursor: pointer;
+}
+
+.dropzone:hover {
+  border-color: var(--accent);
+  color: var(--fg-primary);
+}
+
+.dropzone span {
+  color: var(--fg-muted);
+  font-size: var(--text-sm);
+}
+
+.failed {
+  color: var(--danger) !important;
+}
+
+.file {
+  display: none;
+}
+
+.controls {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.rowLabel {
+  color: var(--fg-muted);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.readout {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--text-xs);
+}
+
+.fileName {
+  overflow: hidden;
+  color: var(--fg-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.probe {
+  color: var(--fg-primary);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.hint {
+  color: var(--fg-muted);
+  white-space: nowrap;
+}

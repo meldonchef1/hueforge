@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../store/useAppStore';
+import { TRIANGLE_LIMIT } from '../../store/types';
 import styles from './StatusBar.module.css';
 
 const EMPTY = '—';
@@ -7,18 +8,24 @@ const EMPTY = '—';
 export function StatusBar() {
   const { t, i18n } = useTranslation();
   const status = useAppStore((s) => s.status);
+  const computed = useAppStore((s) => s.computed);
 
   const number = new Intl.NumberFormat(i18n.language);
-  const overLimit = status.triangles > status.triangleLimit;
+  const overLimit = computed.triangles > TRIANGLE_LIMIT;
 
   return (
     <div className={styles.bar} role="status">
       <span className={styles.field}>
         <span className={styles.label}>{t('statusBar.meshHeight')}</span>
         <span className={styles.value}>
-          {status.maxMeshHeight > 0
-            ? `${status.meshHeight.toFixed(2)} / ${status.maxMeshHeight.toFixed(2)} mm`
-            : EMPTY}
+          {computed.maxHeight > 0 ? `${computed.maxHeight.toFixed(2)} mm` : EMPTY}
+        </span>
+      </span>
+
+      <span className={styles.field}>
+        <span className={styles.label}>{t('statusBar.layers')}</span>
+        <span className={styles.value}>
+          {computed.layers > 0 ? number.format(computed.layers) : EMPTY}
         </span>
       </span>
 
@@ -27,9 +34,13 @@ export function StatusBar() {
         <span
           className={styles.value}
           data-over={overLimit || undefined}
-          title={overLimit ? t('statusBar.trianglesOverLimit', { limit: number.format(status.triangleLimit) }) : undefined}
+          title={
+            overLimit
+              ? t('statusBar.trianglesOverLimit', { limit: number.format(TRIANGLE_LIMIT) })
+              : undefined
+          }
         >
-          {status.triangles > 0 ? number.format(status.triangles) : EMPTY}
+          {computed.triangles > 0 ? number.format(computed.triangles) : EMPTY}
         </span>
       </span>
 
@@ -40,6 +51,11 @@ export function StatusBar() {
 
       <span className={styles.spacer} />
 
+      {overLimit && (
+        <span className={styles.warning}>
+          {t('statusBar.trianglesOverLimit', { limit: number.format(TRIANGLE_LIMIT) })}
+        </span>
+      )}
       {status.warnings.map((warning) => (
         <span key={warning} className={styles.warning}>
           {warning}
