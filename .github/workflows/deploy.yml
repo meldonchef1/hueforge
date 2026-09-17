@@ -30,6 +30,9 @@ jobs:
           # Pages serves the app from /<repo>/, so assets need that prefix.
           VITE_BASE: /${{ github.event.repository.name }}/
       - uses: actions/configure-pages@v5
+        with:
+          # Turns Pages on the first time this runs, so the repo needs no manual setup.
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
