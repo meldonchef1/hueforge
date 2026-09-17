@@ -19,6 +19,12 @@ export default defineConfig({
   build: {
     target: 'es2022',
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        // Three.js is most of the bundle and changes far less often than the app.
+        manualChunks: { three: ['three', 'three/examples/jsm/controls/OrbitControls.js'] },
+      },
+    },
   },
   worker: {
     format: 'es',

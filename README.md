@@ -48,7 +48,7 @@ a později přesunout do Web Workeru nebo do Rustu.
 | Milník                                                            | Stav     |
 | ----------------------------------------------------------------- | -------- |
 | 1. Kostra UI: dokovatelné panely, tmavé téma, deploy na Pages      | hotovo   |
-| 2. MVP: obrázek, výšková mapa, geometrie, export STL               | čeká     |
+| 2. MVP: obrázek, výšková mapa, geometrie, export STL               | hotovo   |
 | 3. Simulace: knihovna filamentů, vrstvy, barevný sloupec, náhled   | čeká     |
 | 4. Kalibrace: testovací vzorky, ladění podle reálných tisků        | čeká     |
 | 5. Pohodlí: SpotFix, řez výškou, porovnání, projekty, 3MF, průvodce | čeká     |

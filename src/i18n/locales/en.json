@@ -88,6 +88,80 @@
       "notMultiple": "Value must be a multiple of the layer height ({{layerHeight}} mm)."
     }
   },
+  "preview": {
+    "label": "Preview",
+    "noImage": "Load an image in the Source image panel and the model appears here.",
+    "computing": "Building the model…"
+  },
+  "sourceImage": {
+    "label": "Source",
+    "model": "Colour model",
+    "models": {
+      "rec709": "Rec. 709",
+      "rec601": "Rec. 601",
+      "average": "Average",
+      "perceptual": "Perceptual"
+    },
+    "drop": {
+      "title": "Drop an image here",
+      "hint": "Or click to pick a file, or paste from the clipboard with Ctrl+V.",
+      "failed": "That file could not be read."
+    },
+    "probe": {
+      "hint": "Click the image to measure brightness and height.",
+      "brightness": "Brightness",
+      "height": "height"
+    }
+  },
+  "geometry": {
+    "size": {
+      "group": "Size",
+      "width": "Width",
+      "widthTip": "Width of the finished print in mm.",
+      "height": "Height",
+      "heightTip": "Height of the finished print in mm, measured flat on the bed.",
+      "lockAspect": "Lock aspect",
+      "lockAspectTip": "Keeps the loaded image's proportions so it cannot stretch.",
+      "detail": "Detail size",
+      "detailTip": "Distance between mesh samples in mm. Smaller means finer detail and more triangles."
+    },
+    "border": {
+      "group": "Border",
+      "none": "No border",
+      "noneTip": "Turns off the flat frame around the image.",
+      "width": "Border width",
+      "widthTip": "How far the frame reaches in from each edge, in mm.",
+      "depth": "Border depth",
+      "depthTip": "Height of the frame in mm. Must be a multiple of the layer height."
+    },
+    "depth": {
+      "group": "Depth",
+      "base": "Min depth",
+      "baseTip": "Solid slab under the relief in mm. Holds the model together at its darkest.",
+      "max": "Max depth",
+      "maxTip": "Total height at the brightest part of the image, in mm.",
+      "dynamic": "Dynamic depth",
+      "dynamicTip": "Rounds the max depth to whole layers so the top one is not cut in half.",
+      "actual": "Actual depth",
+      "layers_one": "{{count}} layer",
+      "layers_other": "{{count}} layers"
+    },
+    "brightness": {
+      "group": "Brightness",
+      "srgb": "sRGB",
+      "srgbTip": "Linearises colour before weighting it. Physically correct, but flatter mid-tones.",
+      "compensation": "Compensation",
+      "compensationTip": "Gamma on the result. Below 1 lifts shadows, above 1 deepens them.",
+      "adjustment": "Adjustment",
+      "adjustmentTip": "Added to every sample, moving the whole relief up or down.",
+      "smoothing": "Smoothing",
+      "smoothingTip": "Blur radius in pixels. Kills noise and banding, but costs fine detail.",
+      "invert": "Invert",
+      "invertTip": "Swaps light and dark. For lithophanes, which print the other way round.",
+      "fullRange": "Full range",
+      "fullRangeTip": "Stretches the darkest and brightest spots across the whole height range."
+    }
+  },
   "panels": {
     "filamentLibrary": "Filament library",
     "preview": "Live 3D preview",
@@ -100,6 +174,7 @@
   },
   "statusBar": {
     "meshHeight": "Mesh height",
+    "layers": "Layers",
     "triangles": "Triangles",
     "fps": "FPS",
     "save": {

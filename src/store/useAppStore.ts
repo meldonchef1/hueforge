@@ -1,19 +1,24 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import {
+  defaultComputed,
   defaultDoc,
   defaultLayout,
   defaultSettings,
+  defaultSource,
   defaultStatus,
   defaultView,
   PANEL_IDS,
 } from './defaults';
 import type {
+  ComputedState,
   DocState,
   LayoutState,
+  ModelGeometry,
   PanelId,
   SaveState,
   SettingsState,
+  SourceState,
   StatusState,
   ViewState,
 } from './types';
@@ -26,6 +31,8 @@ export interface AppState {
   settings: SettingsState;
   layout: LayoutState;
   status: StatusState;
+  source: SourceState;
+  computed: ComputedState;
   past: DocState[];
   future: DocState[];
   /** Bumped by resetLayout to force the dock to rebuild from the default layout. */
@@ -37,6 +44,12 @@ export interface AppState {
   redo: () => void;
   canUndo: () => boolean;
   canRedo: () => boolean;
+
+  /** Patches the geometry through the history, so Ctrl+Z walks it back. */
+  setGeometry: (patch: Partial<ModelGeometry>) => void;
+  setImage: (pixels: ImageData, name: string) => void;
+  clearImage: () => void;
+  setComputed: (patch: Partial<ComputedState>) => void;
 
   setView: (patch: Partial<ViewState>) => void;
   resetCamera: () => void;
@@ -60,6 +73,8 @@ export const useAppStore = create<AppState>()(
       settings: defaultSettings(),
       layout: defaultLayout(),
       status: defaultStatus(),
+      source: defaultSource(),
+      computed: defaultComputed(),
       past: [],
       future: [],
       layoutNonce: 0,
@@ -103,6 +118,23 @@ export const useAppStore = create<AppState>()(
       canUndo: () => get().past.length > 0,
       canRedo: () => get().future.length > 0,
 
+      setGeometry: (patch) =>
+        get().commit((doc) => ({ ...doc, geometry: { ...doc.geometry, ...patch } })),
+
+      setImage: (pixels, name) => {
+        set({ source: { pixels, name } });
+        // A fresh image decides the proportion, so the model follows it.
+        get().commit((doc) => {
+          if (!doc.geometry.lockAspect) return doc;
+          const heightMm = Number(((doc.geometry.widthMm * pixels.height) / pixels.width).toFixed(2));
+          return { ...doc, geometry: { ...doc.geometry, heightMm } };
+        });
+      },
+
+      clearImage: () => set({ source: defaultSource(), computed: defaultComputed() }),
+
+      setComputed: (patch) => set((state) => ({ computed: { ...state.computed, ...patch } })),
+
       setView: (patch) => set((state) => ({ view: { ...state.view, ...patch } })),
 
       resetCamera: () =>
@@ -134,6 +166,8 @@ export const useAppStore = create<AppState>()(
           doc: defaultDoc(),
           view: defaultView(),
           status: { ...defaultStatus(), saveState: 'saved' },
+          source: defaultSource(),
+          computed: defaultComputed(),
           past: [],
           future: [],
         }),

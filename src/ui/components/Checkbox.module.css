@@ -1,0 +1,30 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--h-control);
+}
+
+.input {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.input:disabled {
+  cursor: default;
+}
+
+.label {
+  color: var(--fg-secondary);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.input:disabled + .label {
+  color: var(--fg-muted);
+  cursor: default;
+}

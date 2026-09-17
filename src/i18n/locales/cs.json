@@ -88,6 +88,82 @@
       "notMultiple": "Hodnota musí být násobek výšky vrstvy ({{layerHeight}} mm)."
     }
   },
+  "preview": {
+    "label": "Náhled",
+    "noImage": "Nahraj obrázek v panelu Zdrojový obrázek a model se objeví tady.",
+    "computing": "Počítám model…"
+  },
+  "sourceImage": {
+    "label": "Zdroj",
+    "model": "Barevný model",
+    "models": {
+      "rec709": "Rec. 709",
+      "rec601": "Rec. 601",
+      "average": "Průměr",
+      "perceptual": "Vjemový"
+    },
+    "drop": {
+      "title": "Přetáhni sem obrázek",
+      "hint": "Nebo klikni pro výběr souboru, případně vlož ze schránky přes Ctrl+V.",
+      "failed": "Tenhle soubor se nepodařilo načíst."
+    },
+    "probe": {
+      "hint": "Klikni do obrázku a změř jas a výšku.",
+      "brightness": "Jas",
+      "height": "výška"
+    }
+  },
+  "geometry": {
+    "size": {
+      "group": "Rozměry",
+      "width": "Šířka",
+      "widthTip": "Šířka hotového výtisku v mm.",
+      "height": "Výška",
+      "heightTip": "Výška hotového výtisku v mm, měřeno v rovině podložky.",
+      "lockAspect": "Zámek poměru",
+      "lockAspectTip": "Drží poměr stran podle nahraného obrázku, aby se nedeformoval.",
+      "detail": "Velikost detailu",
+      "detailTip": "Vzdálenost mezi body meshe v mm. Menší hodnota znamená jemnější detail a víc trojúhelníků."
+    },
+    "border": {
+      "group": "Rámeček",
+      "none": "Bez okraje",
+      "noneTip": "Vypne plochý rámeček kolem obrázku.",
+      "width": "Šířka okraje",
+      "widthTip": "Jak daleko rámeček zasahuje od každé hrany dovnitř, v mm.",
+      "depth": "Hloubka okraje",
+      "depthTip": "Výška rámečku v mm. Musí být násobek výšky vrstvy."
+    },
+    "depth": {
+      "group": "Hloubka",
+      "base": "Min hloubka",
+      "baseTip": "Plná základna pod reliéfem v mm. Drží model pohromadě i v nejtmavších místech.",
+      "max": "Max hloubka",
+      "maxTip": "Celková výška v nejsvětlejším místě obrázku, v mm.",
+      "dynamic": "Dynamická hloubka",
+      "dynamicTip": "Zaokrouhlí max hloubku na celé vrstvy, aby poslední vrstva nekončila v půlce.",
+      "actual": "Skutečná hloubka",
+      "layers_one": "{{count}} vrstva",
+      "layers_few": "{{count}} vrstvy",
+      "layers_many": "{{count}} vrstvy",
+      "layers_other": "{{count}} vrstev"
+    },
+    "brightness": {
+      "group": "Jas",
+      "srgb": "sRGB",
+      "srgbTip": "Převede barvy do lineárního prostoru, než se z nich počítá jas. Fyzikálně správné, ale plošší polotóny.",
+      "compensation": "Kompenzace",
+      "compensationTip": "Gamma na výsledný jas. Pod 1 vytáhne stíny, nad 1 je prohloubí.",
+      "adjustment": "Úprava jasu",
+      "adjustmentTip": "Přičte se ke všem hodnotám. Celý reliéf tím jde nahoru nebo dolů.",
+      "smoothing": "Vyhlazení",
+      "smoothingTip": "Rozostření v pixelech. Potlačí šum a schody, ale ubere jemný detail.",
+      "invert": "Negativ",
+      "invertTip": "Prohodí světlá a tmavá místa. Pro litofanie, kde se tiskne naopak.",
+      "fullRange": "Plný rozsah",
+      "fullRangeTip": "Roztáhne nejtmavší a nejsvětlejší místo na celý rozsah výšek."
+    }
+  },
   "panels": {
     "filamentLibrary": "Knihovna filamentů",
     "preview": "Živý 3D náhled",
@@ -100,6 +176,7 @@
   },
   "statusBar": {
     "meshHeight": "Výška meshe",
+    "layers": "Vrstvy",
     "triangles": "Trojúhelníky",
     "fps": "FPS",
     "save": {

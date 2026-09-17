@@ -1,3 +1,8 @@
+import type { BrightnessSettings } from '../core/brightness';
+import type { BorderSettings } from '../core/heightmap';
+
+export type { BrightnessSettings, BorderSettings };
+
 export type PanelId =
   | 'filamentLibrary'
   | 'preview'
@@ -35,6 +40,24 @@ export interface LayerHeights {
   heightStep: number;
 }
 
+/** Printed size and shape of the model. */
+export interface ModelGeometry {
+  widthMm: number;
+  heightMm: number;
+  /** Keep width and height in the source image's proportion. */
+  lockAspect: boolean;
+  /** Distance between mesh samples in mm — the finest detail the mesh can hold. */
+  detailMm: number;
+  border: BorderSettings;
+  /** Solid slab under the relief, in mm. */
+  baseThickness: number;
+  /** Height of the brightest part of the image, in mm. */
+  maxDepth: number;
+  /** Snap max depth to a whole number of layers. */
+  dynamicDepth: boolean;
+  brightness: BrightnessSettings;
+}
+
 /**
  * The undoable document — everything that belongs to the project and that
  * Ctrl+Z is expected to walk back through.
@@ -43,6 +66,24 @@ export interface DocState {
   name: string;
   mode: PrintMode;
   heights: LayerHeights;
+  geometry: ModelGeometry;
+}
+
+/** The loaded image. Pixels are too big for history or localStorage, so this
+ * lives outside the document and is not undoable. */
+export interface SourceState {
+  pixels: ImageData | null;
+  name: string;
+}
+
+/** Latest result of the mesh pipeline. Derived, so never persisted. */
+export interface ComputedState {
+  triangles: number;
+  maxHeight: number;
+  layers: number;
+  /** True while the worker is busy. */
+  computing: boolean;
+  error: string | null;
 }
 
 /** Preview-only state. Not part of the project, so not undoable. */
@@ -71,10 +112,9 @@ export interface LayoutState {
 
 export interface StatusState {
   saveState: SaveState;
-  meshHeight: number;
-  maxMeshHeight: number;
-  triangles: number;
-  triangleLimit: number;
   fps: number;
   warnings: string[];
 }
+
+/** Above this the browser starts to struggle, so the status bar flags it. */
+export const TRIANGLE_LIMIT = 2_000_000;

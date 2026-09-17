@@ -7,6 +7,7 @@ import { useThemeSync } from './hooks/useThemeSync';
 import { useLanguageSync } from './hooks/useLanguageSync';
 import { useAutosave } from './hooks/useAutosave';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { useMeshPipeline } from './hooks/useMeshPipeline';
 import { useAppStore } from '../store/useAppStore';
 import styles from './App.module.css';
 
@@ -16,6 +17,7 @@ export function App() {
   useLanguageSync();
   useAutosave();
   useKeyboardShortcuts();
+  useMeshPipeline();
 
   // Remounting on reset is the only way to rebuild dockview from the default layout.
   const layoutNonce = useAppStore((s) => s.layoutNonce);

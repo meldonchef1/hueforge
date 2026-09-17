@@ -1,4 +1,15 @@
-import type { DocState, LayoutState, PanelId, SettingsState, StatusState, ViewState } from './types';
+import { defaultBrightnessSettings } from '../core/brightness';
+import type {
+  ComputedState,
+  DocState,
+  LayoutState,
+  ModelGeometry,
+  PanelId,
+  SettingsState,
+  SourceState,
+  StatusState,
+  ViewState,
+} from './types';
 
 export const PANEL_IDS: readonly PanelId[] = [
   'filamentLibrary',
@@ -10,6 +21,18 @@ export const PANEL_IDS: readonly PanelId[] = [
   'modelGeometry',
 ] as const;
 
+export const defaultGeometry = (): ModelGeometry => ({
+  widthMm: 100,
+  heightMm: 100,
+  lockAspect: true,
+  detailMm: 0.3,
+  border: { enabled: false, width: 3, depth: 0.4 },
+  baseThickness: 0.16,
+  maxDepth: 2.56,
+  dynamicDepth: true,
+  brightness: defaultBrightnessSettings(),
+});
+
 export const defaultDoc = (): DocState => ({
   name: 'untitled',
   mode: 'filament',
@@ -18,6 +41,17 @@ export const defaultDoc = (): DocState => ({
     firstLayerHeight: 0.16,
     heightStep: 0.04,
   },
+  geometry: defaultGeometry(),
+});
+
+export const defaultSource = (): SourceState => ({ pixels: null, name: '' });
+
+export const defaultComputed = (): ComputedState => ({
+  triangles: 0,
+  maxHeight: 0,
+  layers: 0,
+  computing: false,
+  error: null,
 });
 
 export const defaultView = (): ViewState => ({
@@ -42,10 +76,6 @@ export const defaultLayout = (): LayoutState => ({
 
 export const defaultStatus = (): StatusState => ({
   saveState: 'saved',
-  meshHeight: 0,
-  maxMeshHeight: 0,
-  triangles: 0,
-  triangleLimit: 2_000_000,
   fps: 0,
   warnings: [],
 });

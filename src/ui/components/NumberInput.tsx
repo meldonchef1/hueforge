@@ -14,6 +14,12 @@ interface NumberInputProps {
   /** Returns an error message for a rejected value, or null when it is fine. */
   validate?: (value: number) => string | null;
   disabled?: boolean;
+  /**
+   * Decimals to show. Defaults to whatever the step implies, which is wrong
+   * when a value is finer than its step — an aspect-locked height steps by
+   * 1 mm but lands on 75.23.
+   */
+  precision?: number;
 }
 
 /** Decimal places implied by the step, so 0.04 shows as "0.04" and not "0.0400001". */
@@ -36,9 +42,10 @@ export function NumberInput({
   tooltip,
   validate,
   disabled = false,
+  precision: explicitPrecision,
 }: NumberInputProps) {
   const id = useId();
-  const precision = precisionOf(step);
+  const precision = explicitPrecision ?? precisionOf(step);
   const [draft, setDraft] = useState(() => format(value, precision));
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
