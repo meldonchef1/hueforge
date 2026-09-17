@@ -1,0 +1,141 @@
+/*
+ * HueForge design tokens.
+ *
+ * Neutral greys throughout: the preview is the only saturated thing on screen,
+ * so surrounding chrome must not shift how the user perceives simulated colour.
+ */
+
+:root {
+  /* ---- Typography ---- */
+  --font-ui:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-md: 13px;
+  --text-lg: 15px;
+  --text-xl: 18px;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-bold: 600;
+
+  /* ---- Spacing (4px base) ---- */
+  --space-0: 0;
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 24px;
+  --space-7: 32px;
+
+  /* ---- Radii ---- */
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 8px;
+  --radius-full: 999px;
+
+  /* ---- Chrome dimensions ---- */
+  --h-menubar: 28px;
+  --h-topbar: 44px;
+  --h-statusbar: 24px;
+  --h-control: 24px;
+  --h-tab: 30px;
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --duration-fast: 90ms;
+  --duration-normal: 160ms;
+
+  /* ---- Z layers ---- */
+  --z-panel: 1;
+  --z-overlay: 100;
+  --z-menu: 500;
+  --z-tooltip: 900;
+  --z-modal: 1000;
+}
+
+/* ---- Dark theme (default) ---- */
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg-app: #16181c;
+  --bg-panel: #1c1f24;
+  --bg-panel-header: #22262c;
+  --bg-elevated: #282d34;
+  --bg-input: #131519;
+  --bg-hover: #2f353d;
+  --bg-active: #383f48;
+  --bg-viewport: #0e1013;
+  --bg-scrim: rgb(0 0 0 / 60%);
+
+  --fg-primary: #e6e8ea;
+  --fg-secondary: #a3a9b2;
+  --fg-muted: #6d747e;
+  --fg-inverted: #16181c;
+
+  --border-subtle: #2a2f36;
+  --border-default: #373d45;
+  --border-strong: #4a515b;
+
+  --accent: #4b9fd5;
+  --accent-hover: #5fb0e4;
+  --accent-fg: #0c1014;
+  --accent-subtle: rgb(75 159 213 / 18%);
+
+  --warning: #d9a441;
+  --danger: #d9635f;
+  --success: #5fa971;
+
+  --shadow-panel: 0 2px 8px rgb(0 0 0 / 40%);
+  --shadow-menu: 0 6px 20px rgb(0 0 0 / 55%);
+
+  /* Checkerboard behind transparent swatches */
+  --checker-a: #2a2f36;
+  --checker-b: #22262c;
+}
+
+/* ---- Light theme (opt-in) ---- */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg-app: #eceef1;
+  --bg-panel: #f6f7f9;
+  --bg-panel-header: #e7eaee;
+  --bg-elevated: #ffffff;
+  --bg-input: #ffffff;
+  --bg-hover: #dde1e7;
+  --bg-active: #cfd5dd;
+  --bg-viewport: #dfe2e7;
+  --bg-scrim: rgb(0 0 0 / 35%);
+
+  --fg-primary: #1b1e23;
+  --fg-secondary: #4d545e;
+  --fg-muted: #7b828c;
+  --fg-inverted: #ffffff;
+
+  --border-subtle: #dadee4;
+  --border-default: #c3c9d1;
+  --border-strong: #a2aab5;
+
+  --accent: #1f6f9e;
+  --accent-hover: #2a82b6;
+  --accent-fg: #ffffff;
+  --accent-subtle: rgb(31 111 158 / 14%);
+
+  --warning: #9a6b12;
+  --danger: #b03a36;
+  --success: #327547;
+
+  --shadow-panel: 0 1px 4px rgb(0 0 0 / 12%);
+  --shadow-menu: 0 6px 20px rgb(0 0 0 / 18%);
+
+  --checker-a: #d7dbe1;
+  --checker-b: #e7eaee;
+}

@@ -1,0 +1,39 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.tooSmall {
+  display: none;
+}
+
+/* Below the supported minimum the UI is unusable, so hide it rather than squash it. */
+@media (max-width: 900px) {
+  .app > *:not(.tooSmall) {
+    display: none;
+  }
+
+  .tooSmall {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6);
+    text-align: center;
+  }
+
+  .tooSmall strong {
+    font-size: var(--text-xl);
+  }
+
+  .tooSmall p {
+    max-width: 40ch;
+    margin: 0;
+    color: var(--fg-secondary);
+  }
+}
